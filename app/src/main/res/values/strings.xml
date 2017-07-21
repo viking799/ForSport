@@ -15,4 +15,6 @@
     <string name="Schedule">Schedule a game</string>
     <string name="JoinMatch">Join a competetion</string>
     <string name="gettrainning">Get trainning</string>
+    <string name="Mark">Mark</string>
+    <string name="Register">Register</string>
 </resources>

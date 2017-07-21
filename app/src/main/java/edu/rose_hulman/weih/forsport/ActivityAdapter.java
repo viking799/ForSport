@@ -52,22 +52,22 @@ public class ActivityAdapter extends RecyclerView.Adapter<edu.rose_hulman.weih.f
 
         }
 
-        @Override
-        public ActivityAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    @Override
+    public ActivityAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.type_row_view, parent, false);
             return new ActivityAdapter.ViewHolder(view);
-        }
+    }
 
-        @Override
-        public int getItemCount() {
+    @Override
+    public int getItemCount() {
             return mActivity.size();
         }
 
-        @Override
-        public void onBindViewHolder(ActivityAdapter.ViewHolder holder, int position) {
+    @Override
+    public void onBindViewHolder(ActivityAdapter.ViewHolder holder, int position) {
             String mt = mActivity.get(position);
             holder.mTV.setText(mt);
-        }
-
     }
+
+}
 

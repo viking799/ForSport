@@ -21,9 +21,12 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-            TypeSelect.OnTypeSelectedListener,
-            ActivityListFragment.OnActivitySelectedListener,
-        ScheduleFragment.OnFragmentInteractionListener
+                    TypeSelect.OnTypeSelectedListener,
+                    ActivityListFragment.OnActivitySelectedListener,
+                    ScheduleFragment.OnFragmentInteractionListener,
+                    CompetetionFragment.OnCompetetionSelectListener,
+                    CompetetionDetailFragment.OnRegisterListener
+
             {
 private String currentType;
 
@@ -146,11 +149,31 @@ private String currentType;
                         ft.replace(R.id.fragment_container, fragment);
                         ft.addToBackStack("detail");
                         ft.commit();
+                    }else if(at.equals(getResources().getString(R.string.JoinMatch))){
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                        Fragment fragment = CompetetionFragment.newInstance(currentType,currentType);
+                        ft.replace(R.id.fragment_container, fragment);
+                        ft.addToBackStack("detail");
+                        ft.commit();
                     }
                 }
 
                 @Override
                 public void onFragmentInteraction(Uri uri) {
+                }
 
+                @Override
+                public void onCompselect(Competition competition) {
+                    Log.e("RTT",competition.getName());
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    Fragment fragment = CompetetionDetailFragment.newInstance(competition);
+                    ft.replace(R.id.fragment_container, fragment);
+                    ft.addToBackStack("detail");
+                    ft.commit();
+                }
+
+                @Override
+                public void Register(Competition competition) {
+                    Log.e("RTT","REG!!"+ competition.getName());
                 }
             }

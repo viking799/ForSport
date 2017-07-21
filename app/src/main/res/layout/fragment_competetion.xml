@@ -4,10 +4,11 @@
     android:layout_height="match_parent"
     tools:context="edu.rose_hulman.weih.forsport.CompetetionFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+         <android.support.v7.widget.RecyclerView
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:id="@+id/type_list_recycler_viewC"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
 </FrameLayout>
