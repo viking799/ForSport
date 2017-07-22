@@ -17,4 +17,13 @@
     <string name="gettrainning">Get trainning</string>
     <string name="Mark">Mark</string>
     <string name="Register">Register</string>
+    <string name="select_a_coach">Select a Coach</string>
+    <string name="select_a_trainning_plan">Select a Trainning Plan</string>
+    <string name="Usertypecoach">coach</string>
+    <string name="Male">Male</string>
+    <string name="Female">Female</string>
+    <string name="schedule_a_game_with_him_her">Schedule a game with him/her</string>
+    <string name="get_his_her_trainning">Get his/her trainning</string>
+    <string name="coach_info">Coach Info</string>
+    <string name="trainningplanlist">Trainning Plan List</string>
 </resources>

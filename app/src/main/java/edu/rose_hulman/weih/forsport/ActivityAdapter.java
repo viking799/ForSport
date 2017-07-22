@@ -18,16 +18,16 @@ public class ActivityAdapter extends RecyclerView.Adapter<edu.rose_hulman.weih.f
 
 
     private List<String> mActivity;
-    private ActivityListFragment.OnActivitySelectedListener mListener;
+    private FragmentsEventListener mListener;
     private Context mContext;
 
-    public ActivityAdapter(ActivityListFragment.OnActivitySelectedListener listener, Context context) {
+    public ActivityAdapter(FragmentsEventListener listener, Context context) {
             mListener = listener;
             mContext = context;
             mActivity = Activities.initializeList(mContext);
     }
 
-    public ActivityAdapter(ActivityListFragment.OnActivitySelectedListener listener , Context context, String mcurType) {
+    public ActivityAdapter(FragmentsEventListener listener , Context context, String mcurType) {
         mListener = listener;
         mContext = context;
         mActivity = Activities.initializeList(mContext,mcurType);

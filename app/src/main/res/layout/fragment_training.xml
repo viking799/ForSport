@@ -4,10 +4,30 @@
     android:layout_height="match_parent"
     tools:context="edu.rose_hulman.weih.forsport.TrainingFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+
+        <ToggleButton
+            android:id="@+id/toggleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textOn="@string/select_a_coach"
+            android:textOff="@string/select_a_trainning_plan" />
+
+        <android.support.v7.widget.RecyclerView
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:layout_below="@id/toggleButton"
+            android:id="@+id/type_list_recycler_viewT"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </RelativeLayout>
+
+
 
 </FrameLayout>

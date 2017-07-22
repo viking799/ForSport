@@ -11,26 +11,28 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
-public class TrainingFragment extends Fragment {
-    private static final String ARG_TRAINTYPE = "trainningtype";
+
+public class TrainingListFragment extends Fragment {
+    private static final String ARG_TRAINTYPE = "trainningtype1";
+    private static final String ARG_CURRENTCOACH = "currentcoach";
     private String mtype;
+    private User mCoach;
     private FragmentsEventListener mListener;
-    private UserAdapter mUAP;
     private PlanAdapter mPAP;
 
-    public TrainingFragment() {}
+    public TrainingListFragment() {}
 
-    public static TrainingFragment newInstance(String type) {
-        TrainingFragment fragment = new TrainingFragment();
+  public static TrainingListFragment newInstance(String type,User user) {
+        TrainingListFragment fragment = new TrainingListFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_TRAINTYPE, type);
+        args.putString(ARG_TRAINTYPE,type);
+        args.putParcelable(ARG_CURRENTCOACH,user);
         fragment.setArguments(args);
         return fragment;
     }
@@ -40,31 +42,28 @@ public class TrainingFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mtype = getArguments().getString(ARG_TRAINTYPE);
+            mCoach = getArguments().getParcelable(ARG_CURRENTCOACH);
         }
-        mUAP = new UserAdapter(mListener,getContext(),mtype,1);
-        mPAP = new PlanAdapter(mListener,getContext(),mtype);
+        mPAP= new PlanAdapter(mListener,getContext(),mtype,mCoach);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle(R.string.trainningplanlist);
+        int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
+        actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_training,container,false);
-        final RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.type_list_recycler_viewT);
+        View view = inflater.inflate(R.layout.fragment_training_list,container,false);
+        final RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.type_list_recycler_viewTL);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(mUAP);
-        ToggleButton toggleButton = (ToggleButton) view.findViewById(R.id.toggleButton);
-        toggleButton.setChecked(true);
-        toggleButton.setOnCheckedChangeListener( new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton toggleButton, boolean isChecked) {
-                if(isChecked){
-                    recyclerView.setAdapter(mUAP);
-                }else {
-                    recyclerView.setAdapter(mPAP);
-                }
-            }
-        }) ;
+        recyclerView.setAdapter(mPAP);
         return view;
     }
 
@@ -83,15 +82,6 @@ public class TrainingFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setTitle(R.string.gettrainning);
-        int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
-        actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
     }
 
 }

@@ -18,23 +18,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- *
- */
 public class ActivityListFragment extends Fragment {
 
     private ActivityAdapter mAP;
     private String mcurType;
-    private OnActivitySelectedListener mListener;
+    private FragmentsEventListener mListener;
     private static final String ARG_TYPE = "typeypersafa";
-    private GestureDetectorCompat mGestureDetector;
 
-    public ActivityListFragment() {
-        // Required empty public constructor
-    }
+    public ActivityListFragment() {}
 
     public static ActivityListFragment newInstance(String st) {
         ActivityListFragment fragment = new ActivityListFragment();
@@ -47,7 +38,6 @@ public class ActivityListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mGestureDetector = new GestureDetectorCompat(getContext(),new MyGestureDetector());
 
         if (getArguments() != null) {
             mcurType = getArguments().getString(ARG_TYPE);
@@ -73,8 +63,8 @@ public class ActivityListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnActivitySelectedListener) {
-            mListener = (OnActivitySelectedListener) context;
+        if (context instanceof FragmentsEventListener) {
+            mListener = (FragmentsEventListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -84,7 +74,6 @@ public class ActivityListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Need to wait for the activity to be created to have an action bar.
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         actionBar.setTitle(mcurType);
         int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
@@ -99,49 +88,4 @@ public class ActivityListFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnActivitySelectedListener {
-        void onActSelected(String Activity);
-    }
-
-    private class MyGestureDetector implements GestureDetector.OnGestureListener {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public void onShowPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return false;
-        }
-
-        @Override
-        public void onLongPress(MotionEvent e) {
-
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            return false;
-        }
-    }
 }

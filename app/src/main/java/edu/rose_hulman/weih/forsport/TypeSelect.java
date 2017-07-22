@@ -18,18 +18,11 @@ import android.view.ViewGroup;
 
 import edu.rose_hulman.weih.forsport.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link TypeSelect.OnTypeSelectedListener} interface
- * to handle interaction events.
- *
- */
 public class TypeSelect extends Fragment {
 
 
     private TypeAdapter mTP;
-    private OnTypeSelectedListener mListener;
+    private FragmentsEventListener mListener;
 
     public TypeSelect() {
         // Required empty public constructor
@@ -58,8 +51,8 @@ public class TypeSelect extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnTypeSelectedListener) {
-            mListener = (OnTypeSelectedListener) context;
+        if (context instanceof FragmentsEventListener) {
+            mListener = (FragmentsEventListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -83,17 +76,4 @@ public class TypeSelect extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnTypeSelectedListener {
-        void onTypeSelected(String painting);
-    }
 }

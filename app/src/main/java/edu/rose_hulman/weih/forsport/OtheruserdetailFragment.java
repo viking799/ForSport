@@ -17,20 +17,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CompetetionDetailFragment extends Fragment {
 
-    private static final String ARG_CURCOMPETION = "currentCompetion";
-    private Competition mCom;
+public class OtheruserdetailFragment extends Fragment {
+    private static final String ARG_USER = "currentLookingUser";
+    private User mUser;
     private FragmentsEventListener mListener;
 
-    public CompetetionDetailFragment() {
+    public OtheruserdetailFragment() {}
 
-    }
-
-    public static CompetetionDetailFragment newInstance(Competition competition) {
-        CompetetionDetailFragment fragment = new CompetetionDetailFragment();
+    public static OtheruserdetailFragment newInstance(User user) {
+        OtheruserdetailFragment fragment = new OtheruserdetailFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_CURCOMPETION,competition);
+        args.putParcelable(ARG_USER, user);
         fragment.setArguments(args);
         return fragment;
     }
@@ -39,28 +37,44 @@ public class CompetetionDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mCom = getArguments().getParcelable(ARG_CURCOMPETION);
+            mUser = getArguments().getParcelable(ARG_USER);
         }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        actionBar.setTitle(mUser.getName());
+        int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
+        actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_competetion_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_otheruserdetail, container, false);
         TextView mTV = (TextView) view.findViewById(R.id.name_text_view);
         ImageView iV = (ImageView) view.findViewById(R.id.com_image_view);
         TextView lTV = (TextView) view.findViewById(R.id.loc_text_view);
         TextView pTV = (TextView) view.findViewById(R.id.phone_text_view);
-        TextView dTV = (TextView) view.findViewById(R.id.date_text_view);
-        TextView hTV = (TextView) view.findViewById(R.id.holder_text_view);
+        TextView aTV = (TextView) view.findViewById(R.id.age_text_view);
+        TextView gTV = (TextView) view.findViewById(R.id.gen_text_view);
+        TextView hTV = (TextView) view.findViewById(R.id.honour_text_view);
         Button mbt = (Button) view.findViewById(R.id.mark_button);
-        Button rbt = (Button) view.findViewById(R.id.reg_button);
+        Button sbt = (Button) view.findViewById(R.id.seg_button);
+        Button gbt= (Button) view.findViewById(R.id.get_button);
 
-        mTV.setText(mCom.getName());
-        lTV.setText(mCom.getLocation());
-        pTV.setText(mCom.getPhonenum());
-        dTV.setText(mCom.getStartdate()+"-"+mCom.getEnddate());
-        hTV.setText(mCom.getHolder());
+        mTV.setText(mUser.getName());
+        lTV.setText(mUser.getLocation());
+        pTV.setText(mUser.getPhonenum());
+        aTV.setText(String.valueOf(mUser.getAge()));
+        if(mUser.isGender()){
+            gTV.setText(R.string.Male);
+        }else{
+            gTV.setText(R.string.Female);
+        }
+        //hTV.setText(mCom.getHolder());
 
         mbt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +84,7 @@ public class CompetetionDetailFragment extends Fragment {
             }
         });
 
-        rbt.setOnClickListener(new View.OnClickListener() {
+        sbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getContext(), R.string.Register,
@@ -78,6 +92,15 @@ public class CompetetionDetailFragment extends Fragment {
             }
         });
 
+        gbt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(getContext(), R.string.get_his_her_trainning,
+//                        Toast.LENGTH_SHORT).show();
+                mListener.SelectTrainingFromUser(mUser);
+
+            }
+        });
 
 
         return view;
@@ -94,15 +117,6 @@ public class CompetetionDetailFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setTitle(mCom.getName());
-        int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
-        actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
     }
 
     @Override

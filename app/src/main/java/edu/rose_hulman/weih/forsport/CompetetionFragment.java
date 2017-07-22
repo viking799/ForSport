@@ -18,32 +18,14 @@ import android.view.ViewGroup;
 
 
 public class CompetetionFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_COMPETITION = "compcompcomp";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
     private String curtype;
     private CompetitionAdapter mCAP;
-    private String mParam2;
+    private FragmentsEventListener mListener;
 
-    private OnCompetetionSelectListener mListener;
-    //private CompetetionAdapter
+    public CompetetionFragment() {}
 
-    public CompetetionFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CompetetionFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static CompetetionFragment newInstance(String currenttype, String param2) {
+   public static CompetetionFragment newInstance(String currenttype, String param2) {
         CompetetionFragment fragment = new CompetetionFragment();
         Bundle args = new Bundle();
         args.putString(ARG_COMPETITION,currenttype);
@@ -56,7 +38,6 @@ public class CompetetionFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             curtype = getArguments().getString(ARG_COMPETITION);
-
         }
         mCAP = new CompetitionAdapter(mListener,getContext(),curtype);
     }
@@ -82,18 +63,12 @@ public class CompetetionFragment extends Fragment {
         actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
     }
 
-//    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onCompselect(uri);
-//        }fasfsa
-//    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnCompetetionSelectListener) {
-            mListener = (OnCompetetionSelectListener) context;
+        if (context instanceof FragmentsEventListener) {
+            mListener = (FragmentsEventListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
@@ -106,18 +81,4 @@ public class CompetetionFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnCompetetionSelectListener {
-        // TODO: Update argument type and name
-        void onCompselect(Competition competition);
-    }
 }

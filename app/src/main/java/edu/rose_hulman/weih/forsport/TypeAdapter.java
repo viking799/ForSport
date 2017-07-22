@@ -16,10 +16,10 @@ import edu.rose_hulman.weih.forsport.TypeSelect;
 public class TypeAdapter extends RecyclerView.Adapter<TypeAdapter.ViewHolder> {
 
     private List<String> mType;
-    private TypeSelect.OnTypeSelectedListener mListener;
+    private FragmentsEventListener mListener;
     private Context mContext;
 
-    public TypeAdapter(TypeSelect.OnTypeSelectedListener listener, Context context) {
+    public TypeAdapter(FragmentsEventListener listener, Context context) {
         mListener = listener;
         mContext = context;
         mType = Type.initializeList(mContext);

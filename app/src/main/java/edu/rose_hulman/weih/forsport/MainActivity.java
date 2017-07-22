@@ -20,14 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-                    TypeSelect.OnTypeSelectedListener,
-                    ActivityListFragment.OnActivitySelectedListener,
-                    ScheduleFragment.OnFragmentInteractionListener,
-                    CompetetionFragment.OnCompetetionSelectListener,
-                    CompetetionDetailFragment.OnRegisterListener
-
-            {
+        implements NavigationView.OnNavigationItemSelectedListener,FragmentsEventListener
+{
 private String currentType;
 
                 public String getCurrentType() {
@@ -128,52 +122,88 @@ private String currentType;
         return true;
     }
 
-                @Override
-                public void onTypeSelected(String st) {
-                    currentType = st;
-                    Log.e("RTT",st);
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    Fragment fragment = ActivityListFragment.newInstance(st);
-                    ft.replace(R.id.fragment_container, fragment);
-                    ft.addToBackStack("detail");
-                    ft.commit();
-                }
+    @Override
+    public void onTypeSelected(String st) {
+        currentType = st;
+        Log.e("RTT",st);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = ActivityListFragment.newInstance(st);
+        ft.replace(R.id.fragment_container, fragment);
+        ft.addToBackStack("detail");
+        ft.commit();
+    }
+    @Override
+    public void onActSelected(String at) {
+        Log.e("RTT",at);
+        if(at.equals(getResources().getString(R.string.Schedule))){
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment fragment = ScheduleFragment.newInstance(currentType,currentType);
+            ft.replace(R.id.fragment_container, fragment);
+            ft.addToBackStack("detail");
+            ft.commit();
+        }else if(at.equals(getResources().getString(R.string.JoinMatch))){
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment fragment = CompetetionFragment.newInstance(currentType,currentType);
+            ft.replace(R.id.fragment_container, fragment);
+            ft.addToBackStack("detail");
+            ft.commit();
+        }else if(at.equals(getResources().getString(R.string.gettrainning))){
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            Fragment fragment = TrainingFragment.newInstance(currentType);
+            ft.replace(R.id.fragment_container, fragment);
+            ft.addToBackStack("detail");
+            ft.commit();
+        }
+    }
 
-                @Override
-                public void onActSelected(String at) {
-                    Log.e("RTT",at);
 
-                    if(at.equals(getResources().getString(R.string.Schedule))){
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        Fragment fragment = ScheduleFragment.newInstance(currentType,currentType);
-                        ft.replace(R.id.fragment_container, fragment);
-                        ft.addToBackStack("detail");
-                        ft.commit();
-                    }else if(at.equals(getResources().getString(R.string.JoinMatch))){
-                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                        Fragment fragment = CompetetionFragment.newInstance(currentType,currentType);
-                        ft.replace(R.id.fragment_container, fragment);
-                        ft.addToBackStack("detail");
-                        ft.commit();
-                    }
-                }
+    @Override
+    public void onCompselect(Competition competition) {
+        Log.e("RTT",competition.getName());
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = CompetetionDetailFragment.newInstance(competition);
+        ft.replace(R.id.fragment_container, fragment);
+        ft.addToBackStack("detail");
+        ft.commit();
+    }
 
-                @Override
-                public void onFragmentInteraction(Uri uri) {
-                }
+    @Override
+    public void Register(Competition competition) {
+        Log.e("RTT","REG!!"+ competition.getName());
+    }
 
-                @Override
-                public void onCompselect(Competition competition) {
-                    Log.e("RTT",competition.getName());
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    Fragment fragment = CompetetionDetailFragment.newInstance(competition);
-                    ft.replace(R.id.fragment_container, fragment);
-                    ft.addToBackStack("detail");
-                    ft.commit();
-                }
+    @Override
+    public void onUserSelect(User user) {
+        Log.e("RTT","REG!!"+ user.getName());
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = OtheruserdetailFragment.newInstance(user);
+        ft.replace(R.id.fragment_container, fragment);
+        ft.addToBackStack("detail");
+        ft.commit();
+    }
 
-                @Override
-                public void Register(Competition competition) {
-                    Log.e("RTT","REG!!"+ competition.getName());
-                }
-            }
+    @Override
+    public void onPlanSelect(TrainingPlan trainingPlan) {
+        Log.e("RTT","REG!!"+ trainingPlan.getName());
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = TrainingDetailFragment.newInstance(trainingPlan);
+        ft.replace(R.id.fragment_container, fragment);
+        ft.addToBackStack("detail");
+        ft.commit();
+    }
+
+    @Override
+    public void onSelectActionToUser(User user) {
+        Log.e("RTT","REG!!"+ user.getName());
+    }
+
+    @Override
+    public void SelectTrainingFromUser(User user) {
+        Log.e("RTT","REG!!"+ user.getName());
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = TrainingListFragment.newInstance(currentType,user);
+        ft.replace(R.id.fragment_container, fragment);
+        ft.addToBackStack("detail");
+        ft.commit();
+    }
+}

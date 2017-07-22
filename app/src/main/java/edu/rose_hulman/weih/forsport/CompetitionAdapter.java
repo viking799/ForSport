@@ -24,11 +24,11 @@ import java.util.List;
 
 public class CompetitionAdapter extends RecyclerView.Adapter<edu.rose_hulman.weih.forsport.CompetitionAdapter.ViewHolder>{
     private List<Competition> mCom;
-    private CompetetionFragment.OnCompetetionSelectListener mListener;
+    private FragmentsEventListener mListener;
     private Context mContext;
     private String type;
 
-    public CompetitionAdapter(CompetetionFragment.OnCompetetionSelectListener listener, Context context,String type) {
+    public CompetitionAdapter(FragmentsEventListener listener, Context context,String type) {
         mListener = listener;
         mContext = context;
         mCom = Hardcodefortest.matchlist();
