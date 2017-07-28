@@ -24,4 +24,8 @@ public interface FragmentsEventListener {
     void onPlanSelect(TrainingPlan trainingPlan);
 
     void onCompselect(Competition competition);
+
+    void onListUserSelect(User user);
+
+    void onListSiteSelect(Site site);
 }

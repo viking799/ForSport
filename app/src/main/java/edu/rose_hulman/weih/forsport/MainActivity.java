@@ -137,7 +137,7 @@ private String currentType;
         Log.e("RTT",at);
         if(at.equals(getResources().getString(R.string.Schedule))){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Fragment fragment = ScheduleFragment.newInstance(currentType,currentType);
+            Fragment fragment = ScheduleFragment.newInstance(currentType);
             ft.replace(R.id.fragment_container, fragment);
             ft.addToBackStack("detail");
             ft.commit();
@@ -165,6 +165,16 @@ private String currentType;
         ft.replace(R.id.fragment_container, fragment);
         ft.addToBackStack("detail");
         ft.commit();
+    }
+
+    @Override
+    public void onListUserSelect(User user) {
+        Log.e("TTT",user.getName());
+    }
+
+    @Override
+    public void onListSiteSelect(Site site) {
+        Log.e("TTT",site.getName());
     }
 
     @Override

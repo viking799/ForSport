@@ -4,10 +4,28 @@
     android:layout_height="match_parent"
     tools:context="edu.rose_hulman.weih.forsport.ScheduleFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:id="@+id/type_list_recycler_viewUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:id="@+id/type_list_recycler_viewSite"
+            android:layout_below="@+id/type_list_recycler_viewUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+
+    </RelativeLayout>
+
 
 </FrameLayout>

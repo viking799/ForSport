@@ -37,4 +37,14 @@ public class Hardcodefortest {
         result.add(new TrainingPlan("Plan e"));
         return result;
     }
+
+    public static List<Site> sitelist() {
+        ArrayList<Site> result = new ArrayList<>();
+        result.add(new Site("Plan a"));
+        result.add(new Site("Plan b"));
+        result.add(new Site("Plan c"));
+        result.add(new Site("Plan d"));
+        result.add(new Site("Plan e"));
+        return result;
+    }
 }
