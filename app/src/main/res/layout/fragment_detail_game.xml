@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="16sp"
+    tools:context="edu.rose_hulman.weih.forsport.DetailGameFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <TextView
+        android:id="@+id/name_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EventName"
+        android:textSize="36sp"/>
+
+    <TextView
+        android:id="@+id/Eventfront_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/eventfront"
+        android:layout_below="@+id/name_text_view"
+        android:textSize="24sp"
+         />
+
+    <TextView
+        android:id="@+id/Event_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="What is the event?"
+        android:layout_below="@+id/name_text_view"
+        android:layout_toRightOf="@+id/Eventfront_text_view"
+        android:layout_marginLeft="12sp"
+        android:textSize="24sp"
+        />
+
+    <TextView
+        android:id="@+id/Initfront_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/initiatorfront"
+        android:layout_below="@+id/Eventfront_text_view"
+        android:textSize="24sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/init_list_recycler_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/Initfront_text_view"/>
+
+    <TextView
+        android:id="@+id/Partfront_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/participatorfront"
+        android:layout_below="@+id/init_list_recycler_view"
+        android:textSize="24sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/part_list_recycler_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/Partfront_text_view"/>
+
+
+
+</RelativeLayout>

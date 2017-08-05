@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.rose_hulman.weih.forsport.DetailTrainingFragment">
+    tools:context="edu.rose_hulman.weih.forsport.DetailSiteFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -11,7 +11,7 @@
 
 
         <ImageView
-            android:id="@+id/com_image_view"
+            android:id="@+id/site_image_view"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:layout_marginTop="12dp"
@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="32sp"
-            android:layout_below="@+id/com_image_view"
+            android:layout_below="@+id/site_image_view"
             android:gravity="left"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
@@ -40,64 +40,58 @@
             android:textSize="24sp"
             android:layout_marginLeft="12dp"
             android:gravity="left"
-            android:layout_below="@+id/name_text_view"
+            android:layout_below="@+id/holder_text_view"
             android:text="locationbrabrabra" />
 
         <TextView
-            android:id="@+id/date_text_view"
+            android:id="@+id/phone_text_view"
             android:layout_width="160sp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/loc_text_view"
             android:layout_marginLeft="12sp"
-            android:text="19000101-19000101"
+            android:text="+(86)12312341234"
             android:gravity="left"/>
 
         <TextView
-            android:id="@+id/time_text_view"
+            android:id="@+id/date_text_view"
             android:layout_below="@+id/loc_text_view"
-            android:layout_toRightOf="@+id/date_text_view"
+            android:layout_toRightOf="@+id/phone_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="12sp"
-            android:text="0600-0800"
+            android:text="19000101-19000101"
             android:gravity="center"/>
 
         <TextView
             android:id="@+id/des_text_view"
             android:layout_marginRight="12sp"
             android:layout_marginLeft="12sp"
-            android:layout_below="@+id/time_text_view"
+            android:layout_below="@+id/phone_text_view"
             android:layout_width="match_parent"
             android:text="brabrabrabrabra"
             android:layout_height="wrap_content" />
-        <Button
-            android:id="@+id/check_button"
-            android:layout_width="wrap_content"
-            android:layout_below="@+id/des_text_view"
-            android:layout_alignParentLeft="true"
-            android:textSize="16sp"
+
+        <TextView
+            android:id="@+id/holder_text_view"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/coach_info" />
+            android:layout_below="@id/name_text_view"
+            android:layout_marginLeft="12sp"
+            android:layout_marginRight="12sp"
+            android:text="Holder here!!!!"
+            android:textSize="30sp"
+            android:gravity="left"
+            />
 
         <Button
             android:id="@+id/mark_button"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="8sp"
-            android:layout_below="@+id/des_text_view"
-            android:layout_toLeftOf="@+id/reg_button"
-            android:textSize="16sp"
-            android:layout_height="wrap_content"
-            android:text="@string/Mark" />
-
-        <Button
-            android:id="@+id/reg_button"
             android:layout_width="wrap_content"
             android:layout_marginRight="12sp"
             android:layout_below="@+id/des_text_view"
             android:layout_alignParentRight="true"
             android:textSize="16sp"
             android:layout_height="wrap_content"
-            android:text="@string/Register" />
+            android:text="@string/Mark" />
 
     </RelativeLayout>
 

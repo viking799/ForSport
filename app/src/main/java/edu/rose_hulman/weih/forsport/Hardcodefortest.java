@@ -47,4 +47,28 @@ public class Hardcodefortest {
         result.add(new Site("Plan e"));
         return result;
     }
+
+    public static List<ForSportEvent> gamelist() {
+        ArrayList<ForSportEvent> result = new ArrayList<>();
+        result.add(new Game("comp 1"));
+        result.get(0).setCurrentEvent(new Competition("Comp1"));
+        result.add(new Game("trainning 1"));
+        result.get(1).setCurrentEvent(new TrainingPlan("Plan A"));
+        result.add(new Game("game c"));
+        result.add(new Game("game d"));
+        result.add(new Game("game e"));
+        return result;
+    }
+
+    public static List<ForSportData> datalist() {
+        ArrayList<ForSportData> result= new ArrayList<>();
+        result.add(new Site("Site a"));
+        result.add(new Site("Site b"));
+        result.add(new TrainingPlan("Plan c"));
+        result.add(new TrainingPlan("Plan d"));
+        result.add(new User("White"));
+        result.add(new User("Black"));
+        result.add(new Competition("Competition4"));
+        return result;
+    }
 }

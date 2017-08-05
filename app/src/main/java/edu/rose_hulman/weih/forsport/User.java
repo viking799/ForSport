@@ -1,5 +1,6 @@
 package edu.rose_hulman.weih.forsport;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -7,8 +8,9 @@ import android.os.Parcelable;
  * Created by Administrator on 2017/7/22.
  */
 
-public class User implements Parcelable {
+public class User implements Parcelable, ForSportData {
     private String name;
+    private Uri image;
     private int age = 99;
     private String ID = "0000099999";
     private String password = "0000099999";
@@ -35,11 +37,11 @@ public class User implements Parcelable {
         this.phonenum = phonenum;
         this.email = email;
         this.gender = gender;
-        this.photo = photo;
     }
 
     protected User(Parcel in) {
         name = in.readString();
+        image = in.readParcelable(Uri.class.getClassLoader());
         age = in.readInt();
         ID = in.readString();
         password = in.readString();
@@ -49,7 +51,7 @@ public class User implements Parcelable {
         location = in.readString();
         des = in.readString();
         rate = in.readDouble();
-        photo = in.readString();
+        isCoach = in.readByte() != 0;
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -64,8 +66,50 @@ public class User implements Parcelable {
         }
     };
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setImage(Uri image) {
+        this.image = image;
+    }
+
+    public void setPhonenum(String phonenum) {
+        this.phonenum = phonenum;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeParcelable(image, flags);
+        dest.writeInt(age);
+        dest.writeString(ID);
+        dest.writeString(password);
+        dest.writeString(phonenum);
+        dest.writeString(email);
+        dest.writeByte((byte) (gender ? 1 : 0));
+        dest.writeString(location);
+        dest.writeString(des);
+        dest.writeDouble(rate);
+        dest.writeByte((byte) (isCoach ? 1 : 0));
+    }
+
+    @Override
     public String getName() {
         return name;
+    }
+
+    public Uri getImage() {
+        return image;
     }
 
     public int getAge() {
@@ -84,18 +128,6 @@ public class User implements Parcelable {
         return phonenum;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public String getDes() {
-        return des;
-    }
-
-    public boolean isCoach() {
-        return isCoach;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -104,33 +136,19 @@ public class User implements Parcelable {
         return gender;
     }
 
-    public String getPhoto() {
-        return photo;
+    public String getLocation() {
+        return location;
     }
 
-    private String photo;
+    public String getDes() {
+        return des;
+    }
 
     public double getRate() {
         return rate;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeInt(age);
-        dest.writeString(ID);
-        dest.writeString(password);
-        dest.writeString(phonenum);
-        dest.writeString(email);
-        dest.writeByte((byte) (gender ? 1 : 0));
-        dest.writeString(location);
-        dest.writeString(des);
-        dest.writeDouble(rate);
-        dest.writeString(photo);
+    public boolean isCoach() {
+        return isCoach;
     }
 }

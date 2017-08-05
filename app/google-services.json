@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "633580998312",
+    "firebase_url": "https://forsport-35586.firebaseio.com",
+    "project_id": "forsport-35586",
+    "storage_bucket": "forsport-35586.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:633580998312:android:31cb9696a1d9db0a",
+        "android_client_info": {
+          "package_name": "edu.rose_hulman.weih.forsport"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "633580998312-ldl1004gcloqo2of71j5iluhmacameai.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6BB8N_6cwjNuIz45qyngnq67O62BgoN8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

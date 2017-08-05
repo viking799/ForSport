@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by Administrator on 2017/7/22.
  */
 
-public class Competition implements Parcelable {
+public class Competition implements Parcelable,ForSportData {
     private String name;
     private String location;
     private String phonenum;
@@ -62,6 +62,30 @@ public class Competition implements Parcelable {
         this.feetype = feetype;
     }
 
+    protected Competition(Parcel in) {
+        name = in.readString();
+        location = in.readString();
+        phonenum = in.readString();
+        startdate = in.readLong();
+        enddate = in.readLong();
+        deadline = in.readLong();
+        holder = in.readString();
+        bonus = in.readLong();
+        fee = in.readLong();
+    }
+
+    public static final Creator<Competition> CREATOR = new Creator<Competition>() {
+        @Override
+        public Competition createFromParcel(Parcel in) {
+            return new Competition(in);
+        }
+
+        @Override
+        public Competition[] newArray(int size) {
+            return new Competition[size];
+        }
+    };
+
     public String getName() {
         return name;
     }
@@ -113,6 +137,14 @@ public class Competition implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(name);
+        dest.writeString(location);
+        dest.writeString(phonenum);
+        dest.writeLong(startdate);
+        dest.writeLong(enddate);
+        dest.writeLong(deadline);
+        dest.writeString(holder);
+        dest.writeLong(bonus);
+        dest.writeLong(fee);
     }
 }

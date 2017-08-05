@@ -2,7 +2,6 @@ package edu.rose_hulman.weih.forsport;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,15 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class OtheruserdetailFragment extends Fragment {
+public class DetailOtheruserFragment extends Fragment {
     private static final String ARG_USER = "currentLookingUser";
     private User mUser;
     private FragmentsEventListener mListener;
 
-    public OtheruserdetailFragment() {}
+    public DetailOtheruserFragment() {}
 
-    public static OtheruserdetailFragment newInstance(User user) {
-        OtheruserdetailFragment fragment = new OtheruserdetailFragment();
+    public static DetailOtheruserFragment newInstance(User user) {
+        DetailOtheruserFragment fragment = new DetailOtheruserFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_USER, user);
         fragment.setArguments(args);

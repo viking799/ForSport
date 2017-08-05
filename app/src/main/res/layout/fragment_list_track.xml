@@ -2,12 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.rose_hulman.weih.forsport.ListActivityFragment">
+    tools:context="edu.rose_hulman.weih.forsport.ListTrackFragment">
 
     <android.support.v7.widget.RecyclerView
         android:paddingTop="4dp"
         android:paddingBottom="4dp"
-        android:id="@+id/type_list_recycler_viewA"
+        android:id="@+id/type_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

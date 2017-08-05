@@ -5,48 +5,62 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.constraint.solver.SolverVariable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
-import edu.rose_hulman.weih.forsport.R;
 
-public class TypeSelect extends Fragment {
-
-
-    private TypeAdapter mTP;
+public class DetailSiteFragment extends Fragment {
+    private static final String ARG_SITE = "CUrrentSite";
+    private Site mSite;
     private FragmentsEventListener mListener;
+    public DetailSiteFragment() {}
 
-    public TypeSelect() {
-        // Required empty public constructor
+    public static DetailSiteFragment newInstance(Site site) {
+        DetailSiteFragment fragment = new DetailSiteFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_SITE,site);
+        fragment.setArguments(args);
+        return fragment;
     }
 
-
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTP = new TypeAdapter(mListener,getContext());
+        if (getArguments() != null) {
+            mSite = getArguments().getParcelable(ARG_SITE);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_type_select, container, false);
-        RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.type_list_recycler_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(mTP);
+        View view = inflater.inflate(R.layout.fragment_detail_site, container, false);
+        TextView mTV = (TextView) view.findViewById(R.id.name_text_view);
+        ImageView iV = (ImageView) view.findViewById(R.id.site_image_view);
+        TextView lTV = (TextView) view.findViewById(R.id.loc_text_view);
+        Button mbt = (Button) view.findViewById(R.id.mark_button);
+
+        mTV.setText(mSite.getName());
+        lTV.setText(mSite.getLocation());
+
+        mbt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(),R.string.Mark,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -58,17 +72,14 @@ public class TypeSelect extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Need to wait for the activity to be created to have an action bar.
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setTitle(R.string.app_name);
+        actionBar.setTitle(mSite.getName());
         int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
         actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
     }
-
 
     @Override
     public void onDetach() {

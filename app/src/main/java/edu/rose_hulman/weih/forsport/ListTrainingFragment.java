@@ -2,7 +2,6 @@ package edu.rose_hulman.weih.forsport;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,24 +10,23 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
-public class TrainingFragment extends Fragment {
+public class ListTrainingFragment extends Fragment {
     private static final String ARG_TRAINTYPE = "trainningtype";
     private String mtype;
     private FragmentsEventListener mListener;
     private UserAdapter mUAP;
     private PlanAdapter mPAP;
 
-    public TrainingFragment() {}
+    public ListTrainingFragment() {}
 
-    public static TrainingFragment newInstance(String type) {
-        TrainingFragment fragment = new TrainingFragment();
+    public static ListTrainingFragment newInstance(String type) {
+        ListTrainingFragment fragment = new ListTrainingFragment();
         Bundle args = new Bundle();
         args.putString(ARG_TRAINTYPE, type);
         fragment.setArguments(args);

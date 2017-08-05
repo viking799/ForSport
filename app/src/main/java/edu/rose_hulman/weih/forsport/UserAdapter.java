@@ -15,7 +15,7 @@ import java.util.List;
  * Created by Administrator on 2017/7/22.
  */
 
-public class UserAdapter extends RecyclerView.Adapter<edu.rose_hulman.weih.forsport.UserAdapter.ViewHolder>{
+public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder>{
     private List<User> mUsers;
     private FragmentsEventListener mListener;
     private Context mContext;

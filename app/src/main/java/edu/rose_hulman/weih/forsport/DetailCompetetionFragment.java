@@ -2,7 +2,6 @@ package edu.rose_hulman.weih.forsport;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,18 +16,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+public class DetailCompetetionFragment extends Fragment {
 
-public class TrainingDetailFragment extends Fragment {
-    private static final String ARG_CURPLAN = "currenttrainnningplannn";
-    private TrainingPlan mTp;
+    private static final String ARG_CURCOMPETION = "currentCompetion";
+    private Competition mCom;
     private FragmentsEventListener mListener;
 
-    public TrainingDetailFragment() {}
+    public DetailCompetetionFragment() {
 
-    public static TrainingDetailFragment newInstance(TrainingPlan tp) {
-        TrainingDetailFragment fragment = new TrainingDetailFragment();
+    }
+
+    public static DetailCompetetionFragment newInstance(Competition competition) {
+        DetailCompetetionFragment fragment = new DetailCompetetionFragment();
         Bundle args = new Bundle();
-        args.putParcelable(ARG_CURPLAN, tp);
+        args.putParcelable(ARG_CURCOMPETION,competition);
         fragment.setArguments(args);
         return fragment;
     }
@@ -37,27 +38,29 @@ public class TrainingDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mTp = getArguments().getParcelable(ARG_CURPLAN);
+            mCom = getArguments().getParcelable(ARG_CURCOMPETION);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_training_detail, container, false);
+        View view = inflater.inflate(R.layout.fragment_competetion_detail, container, false);
         TextView mTV = (TextView) view.findViewById(R.id.name_text_view);
         ImageView iV = (ImageView) view.findViewById(R.id.com_image_view);
         TextView lTV = (TextView) view.findViewById(R.id.loc_text_view);
+        TextView pTV = (TextView) view.findViewById(R.id.phone_text_view);
         TextView dTV = (TextView) view.findViewById(R.id.date_text_view);
-        TextView tTV = (TextView) view.findViewById(R.id.time_text_view);
+        TextView hTV = (TextView) view.findViewById(R.id.holder_text_view);
         Button mbt = (Button) view.findViewById(R.id.mark_button);
         Button rbt = (Button) view.findViewById(R.id.reg_button);
-        Button cbt = (Button) view.findViewById(R.id.check_button);
 
-        mTV.setText(mTp.getName());
-        lTV.setText(mTp.getLocation());
-        dTV.setText(mTp.getStartdate()+"-"+mTp.getEnddate());
-        tTV.setText(mTp.getStarttime()+"-"+mTp.getEndtime());
+        mTV.setText(mCom.getName());
+        lTV.setText(mCom.getLocation());
+        pTV.setText(mCom.getPhonenum());
+        dTV.setText(mCom.getStartdate()+"-"+mCom.getEnddate());
+        hTV.setText(mCom.getHolder());
+
         mbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,16 +77,12 @@ public class TrainingDetailFragment extends Fragment {
             }
         });
 
-        cbt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onUserSelect(mTp.getCoach());
-            }
-        });
 
 
         return view;
     }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -100,7 +99,7 @@ public class TrainingDetailFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setTitle(mTp.getName());
+        actionBar.setTitle(mCom.getName());
         int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
         actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
     }

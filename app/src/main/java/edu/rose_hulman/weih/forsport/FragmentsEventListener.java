@@ -28,4 +28,16 @@ public interface FragmentsEventListener {
     void onListUserSelect(User user);
 
     void onListSiteSelect(Site site);
+
+    void onLogin(String account, String password);
+
+    void onGoogleLogin();
+
+    void onDataSelect(ForSportData data);
+
+    void onSiteSelect(Site site);
+
+    void onEventSelect(ForSportEvent forSportEvent);
+
+    void UserDataChanged(User mUser);
 }

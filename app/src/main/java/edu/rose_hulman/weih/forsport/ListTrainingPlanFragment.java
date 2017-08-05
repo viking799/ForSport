@@ -2,7 +2,6 @@ package edu.rose_hulman.weih.forsport;
 
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,19 +15,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-
-public class CompetetionFragment extends Fragment {
-    private static final String ARG_COMPETITION = "compcompcomp";
-    private String curtype;
-    private CompetitionAdapter mCAP;
+public class ListTrainingPlanFragment extends Fragment {
+    private static final String ARG_TRAINTYPE = "trainningtype1";
+    private static final String ARG_CURRENTCOACH = "currentcoach";
+    private String mtype;
+    private User mCoach;
     private FragmentsEventListener mListener;
+    private PlanAdapter mPAP;
 
-    public CompetetionFragment() {}
+    public ListTrainingPlanFragment() {}
 
-   public static CompetetionFragment newInstance(String currenttype, String param2) {
-        CompetetionFragment fragment = new CompetetionFragment();
+  public static ListTrainingPlanFragment newInstance(String type, User user) {
+        ListTrainingPlanFragment fragment = new ListTrainingPlanFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_COMPETITION,currenttype);
+        args.putString(ARG_TRAINTYPE,type);
+        args.putParcelable(ARG_CURRENTCOACH,user);
         fragment.setArguments(args);
         return fragment;
     }
@@ -37,32 +38,31 @@ public class CompetetionFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            curtype = getArguments().getString(ARG_COMPETITION);
+            mtype = getArguments().getString(ARG_TRAINTYPE);
+            mCoach = getArguments().getParcelable(ARG_CURRENTCOACH);
         }
-        mCAP = new CompetitionAdapter(mListener,getContext(),curtype);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_competetion, container, false);
-        RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.type_list_recycler_viewC);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(mCAP);
-        return view;
+        mPAP= new PlanAdapter(mListener,getContext(),mtype,mCoach);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        // Need to wait for the activity to be created to have an action bar.
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        actionBar.setTitle(R.string.JoinMatch);
+        actionBar.setTitle(R.string.trainningplanlist);
         int defaultColor = ContextCompat.getColor(getContext(), R.color.colorPrimary);
         actionBar.setBackgroundDrawable(new ColorDrawable(defaultColor));
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_training_list,container,false);
+        final RecyclerView recyclerView = (RecyclerView)view.findViewById(R.id.type_list_recycler_viewTL);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setAdapter(mPAP);
+        return view;
+    }
 
     @Override
     public void onAttach(Context context) {

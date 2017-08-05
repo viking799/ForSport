@@ -26,4 +26,48 @@
     <string name="get_his_her_trainning">Get his/her trainning</string>
     <string name="coach_info">Coach Info</string>
     <string name="trainningplanlist">Trainning Plan List</string>
+    <string name="email_login_in">Email Login In</string>
+    <string name="google_login_in">Google Login In</string>
+    <string name="wechat_login_in">Wechat Login In</string>
+    <string name="rose_login_in">Rose Login In</string>
+    <string name="forsportdes">For your skill. For your health. For your better life.</string>
+
+
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Login</string>
+    <string name="action_sign_in_with_google">Sign in with Google</string>
+    <string name="invalid_email">This email address is invalid</string>
+    <string name="invalid_password">Password is too short</string>
+    <string name="incorrect_password">Password is incorrect</string>
+    <string name="field_required">This field is required</string>
+
+
+    <string name="login_error">Login Error!</string>
+    <string name="no_passwords">You have no passwords</string>
+    <string name="action_add">Add</string>
+    <string name="action_logout">Logout</string>
+    <string name="deleted">Deleted</string>
+    <string name="undo">UNDO</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="showPassword">Show password</string>
+    <string name="save">Save</string>
+    <string name="edit_password_title">Edit Password</string>
+    <string name="service">Service</string>
+    <string name="add_password_title">Add Password</string>
+    <string name="add">Add</string>
+    <string name="login_with_rosefire">Login with Rosefire</string>
+    <string name="TagLogin">login</string>
+    <string name="my_marks">My Marks</string>
+    <string name="my_tracks">My Tracks</string>
+    <string name="my_events">My Events</string>
+    <string name="eventfront">Event:</string>
+    <string name="initiatorfront">Initiator:</string>
+    <string name="participatorfront">Participator:</string>
+    <string name="EnternameHint">Enter your name here</string>
+    <string name="EnterPhonehint">Enter your Phone number here</string>
+    <string name="EnterEmailHint">Enter your email address here</string>
+    <string name="comfirm">Comfirm</string>
+    <string name="setting">Setting</string>
 </resources>

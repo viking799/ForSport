@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by Administrator on 2017/7/22.
  */
 
-public class TrainingPlan implements Parcelable {
+public class TrainingPlan implements Parcelable,ForSportData {
     private String name;
     private int fee = 200;
     private char feetype = '$';

@@ -11,12 +11,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import edu.rose_hulman.weih.forsport.Hardcodefortest;
-import edu.rose_hulman.weih.forsport.R;
-import edu.rose_hulman.weih.forsport.TrainingFragment;
-import edu.rose_hulman.weih.forsport.TrainingPlan;
-import edu.rose_hulman.weih.forsport.User;
-
 public class PlanAdapter extends RecyclerView.Adapter<edu.rose_hulman.weih.forsport.PlanAdapter.ViewHolder>{
     private List<TrainingPlan> mPlans;
     private FragmentsEventListener mListener;
