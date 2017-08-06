@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity
         Log.e("RTT",at);
         if(at.equals(getResources().getString(R.string.Schedule))){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Fragment fragment = ScheduleFragment.newInstance(currentType);
+            Fragment fragment = ListScheduleFragment.newInstance(currentType);
             ft.replace(R.id.fragment_container, fragment);
             ft.addToBackStack("detail");
             ft.commit();

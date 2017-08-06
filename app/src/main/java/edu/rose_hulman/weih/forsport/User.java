@@ -120,6 +120,10 @@ public class User implements Parcelable, ForSportData {
         return ID;
     }
 
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
     public String getPassword() {
         return password;
     }

@@ -40,11 +40,11 @@ public class Hardcodefortest {
 
     public static List<Site> sitelist() {
         ArrayList<Site> result = new ArrayList<>();
-        result.add(new Site("Plan a"));
-        result.add(new Site("Plan b"));
-        result.add(new Site("Plan c"));
-        result.add(new Site("Plan d"));
-        result.add(new Site("Plan e"));
+        result.add(new Site("Earth"));
+        result.add(new Site("Mars"));
+        result.add(new Site("Moon"));
+        result.add(new Site("Jupiter"));
+        result.add(new Site("Mercury"));
         return result;
     }
 

@@ -8,7 +8,7 @@ import android.os.Parcelable;
  */
 
 public class Site implements ForSportData,Parcelable{
-    private long ID = -1;
+    private String ID = "-1";
     private String name ;
     private String location = "XX city XX street XX state XX country";
     private String image;
@@ -19,7 +19,7 @@ public class Site implements ForSportData,Parcelable{
     }
 
     protected Site(Parcel in) {
-        ID = in.readLong();
+        ID = in.readString();
         name = in.readString();
         location = in.readString();
         image = in.readString();
@@ -37,16 +37,20 @@ public class Site implements ForSportData,Parcelable{
         }
     };
 
-    public long getID() {
-        return ID;
-    }
-
     public String getName() {
         return name;
     }
 
     public String getLocation() {
         return location;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
     @Override
@@ -56,7 +60,7 @@ public class Site implements ForSportData,Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(ID);
+        dest.writeString(ID);
         dest.writeString(name);
         dest.writeString(location);
         dest.writeString(image);

@@ -70,4 +70,7 @@
     <string name="EnterEmailHint">Enter your email address here</string>
     <string name="comfirm">Comfirm</string>
     <string name="setting">Setting</string>
+    <string name="SelectThisPlayerAnyway">Select anyway</string>
+    <string name="PlaySiteNotMatch">This player will not play in this site</string>
+    <string name="sent_a_request">Sent A Request</string>
 </resources>
