@@ -73,4 +73,7 @@
     <string name="SelectThisPlayerAnyway">Select anyway</string>
     <string name="PlaySiteNotMatch">This player will not play in this site</string>
     <string name="sent_a_request">Sent A Request</string>
+    <string name="googleloginfailed">Google Login Failed</string>
+    <string name="sitefront">Site:</string>
+    <string name="holderfront">Holder:</string>
 </resources>

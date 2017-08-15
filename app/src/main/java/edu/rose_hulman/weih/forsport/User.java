@@ -1,24 +1,27 @@
 package edu.rose_hulman.weih.forsport;
 
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.google.firebase.auth.FirebaseUser;
 
 /**
  * Created by Administrator on 2017/7/22.
  */
 
 public class User implements Parcelable, ForSportData {
-    private String name;
-    private Uri image;
+    private String name = "Your Name";
+    private Bitmap image;
     private int age = 99;
-    private String ID = "0000099999";
+    private String ID = "XXXXXXXXX";
     private String password = "0000099999";
-    private String phonenum = "(+1)8882228888";
-    private String email = "0000099999@gmail.com";
-    private boolean gender = true;
-    private String location = "1111, XX street, TerreHaute, IN, USA ";
-    private String des = "brabrabra";
+    private String phonenum = "";
+    private String email = "";
+    private String gender = "M";
+    private String location = "";
+    private String des = "";
     private double rate = 0;
     private boolean isCoach = true;
 
@@ -29,25 +32,16 @@ public class User implements Parcelable, ForSportData {
         this.name = name;
     }
 
-    public User(String name, int age, String ID, String password, String phonenum, String email, boolean gender, String photo) {
-        this.name = name;
-        this.age = age;
-        this.ID = ID;
-        this.password = password;
-        this.phonenum = phonenum;
-        this.email = email;
-        this.gender = gender;
-    }
 
     protected User(Parcel in) {
         name = in.readString();
-        image = in.readParcelable(Uri.class.getClassLoader());
+        image = in.readParcelable(Bitmap.class.getClassLoader());
         age = in.readInt();
         ID = in.readString();
         password = in.readString();
         phonenum = in.readString();
         email = in.readString();
-        gender = in.readByte() != 0;
+        gender = in.readString();
         location = in.readString();
         des = in.readString();
         rate = in.readDouble();
@@ -66,11 +60,17 @@ public class User implements Parcelable, ForSportData {
         }
     };
 
+    public User(FirebaseUser user) {
+        name = user.getDisplayName();
+        email = user.getEmail();
+        //image = user.getPhotoUrl();
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setImage(Uri image) {
+    public void setImage(Bitmap image) {
         this.image = image;
     }
 
@@ -96,7 +96,7 @@ public class User implements Parcelable, ForSportData {
         dest.writeString(password);
         dest.writeString(phonenum);
         dest.writeString(email);
-        dest.writeByte((byte) (gender ? 1 : 0));
+        dest.writeString(gender);
         dest.writeString(location);
         dest.writeString(des);
         dest.writeDouble(rate);
@@ -108,7 +108,7 @@ public class User implements Parcelable, ForSportData {
         return name;
     }
 
-    public Uri getImage() {
+    public Bitmap getImage() {
         return image;
     }
 
@@ -136,7 +136,7 @@ public class User implements Parcelable, ForSportData {
         return email;
     }
 
-    public boolean isGender() {
+    public String setGender() {
         return gender;
     }
 
@@ -154,5 +154,9 @@ public class User implements Parcelable, ForSportData {
 
     public boolean isCoach() {
         return isCoach;
+    }
+
+    public String getGender() {
+        return gender;
     }
 }

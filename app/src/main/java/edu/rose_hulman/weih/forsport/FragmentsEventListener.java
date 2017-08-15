@@ -39,5 +39,15 @@ public interface FragmentsEventListener {
 
     void onEventSelect(ForSportEvent forSportEvent);
 
-    void UserDataChanged(User mUser);
+    void UserDataChanged(User mUser, boolean b);
+
+    void mark(ForSportData mSite);
+
+    void GetTraining(TrainingPlan mTp, Site mSt, User mCoach);
+
+    void JoinComp(Competition mCom);
+
+    void scheduleAGame(String text, User user, Site site);
+
+    void SchedulingAGame(User mUser);
 }

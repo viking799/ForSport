@@ -1,5 +1,6 @@
 package edu.rose_hulman.weih.forsport;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,27 +10,23 @@ import android.os.Parcelable;
 
 public class TrainingPlan implements Parcelable,ForSportData {
     private String name;
-    private int fee = 200;
-    private char feetype = '$';
-    private String des = "brabrabrabrabra";
-    private User coach = new User("coach");
-    private long startdate = 19991212;
-    private long enddate = 19991212;
-    private int starttime = 600;
-    private int endtime = 800;
-    private double rate = 0;
+    private String fee = "200";
+    private String des = "";
+    private String coach = "0000000001";
+    private String startdate = "19991212";
+    private String enddate = "19991212";
+    private String ID = "";
+    private String site = null;
 
     protected TrainingPlan(Parcel in) {
         name = in.readString();
-        fee = in.readInt();
+        fee = in.readString();
         des = in.readString();
-        coach = in.readParcelable(User.class.getClassLoader());
-        startdate = in.readLong();
-        enddate = in.readLong();
-        starttime = in.readInt();
-        endtime = in.readInt();
-        rate = in.readDouble();
-        location = in.readString();
+        coach = in.readString();
+        startdate = in.readString();
+        enddate = in.readString();
+        site = in.readString();
+        ID = in.readString();
     }
 
     public static final Creator<TrainingPlan> CREATOR = new Creator<TrainingPlan>() {
@@ -44,15 +41,7 @@ public class TrainingPlan implements Parcelable,ForSportData {
         }
     };
 
-    public double getRate() {
-        return rate;
-    }
 
-    public String getLocation() {
-        return location;
-    }
-
-    private String location = "trainninglocation";
 
     public TrainingPlan() {
     }
@@ -61,53 +50,38 @@ public class TrainingPlan implements Parcelable,ForSportData {
         this.name = name;
     }
 
-    public TrainingPlan(String name, int fee, char feetype, String des, User coach, long startdate, long enddate, int starttime, int endtime) {
-        this.name = name;
-        this.fee = fee;
-        this.feetype = feetype;
-        this.des = des;
-        this.coach = coach;
-        this.startdate = startdate;
-        this.enddate = enddate;
-        this.starttime = starttime;
-        this.endtime = endtime;
-    }
 
     public String getName() {
         return name;
     }
 
-    public int getFee() {
-        return fee;
+    @Override
+    public String getID() {
+        return ID;
     }
 
-    public char getFeetype() {
-        return feetype;
+    @Override
+    public Bitmap getImage() {
+        return null;
     }
+
 
     public String getDes() {
         return des;
     }
 
-    public User getCoach() {
+    public String getCoach() {
         return coach;
     }
 
-    public long getStartdate() {
+    public String getStartdate() {
         return startdate;
     }
 
-    public long getEnddate() {
+    public String getEnddate() {
         return enddate;
     }
 
-    public int getStarttime() {
-        return starttime;
-    }
-
-    public int getEndtime() {
-        return endtime;
-    }
 
     @Override
     public int describeContents() {
@@ -117,14 +91,24 @@ public class TrainingPlan implements Parcelable,ForSportData {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(name);
-        dest.writeInt(fee);
         dest.writeString(des);
-        dest.writeParcelable(coach, flags);
-        dest.writeLong(startdate);
-        dest.writeLong(enddate);
-        dest.writeInt(starttime);
-        dest.writeInt(endtime);
-        dest.writeDouble(rate);
-        dest.writeString(location);
+        dest.writeString(coach);
+        dest.writeString(startdate);
+        dest.writeString(enddate);
+        dest.writeString(site);
+        dest.writeString(ID);
+        dest.writeString(fee);
+    }
+
+    public String getSite() {
+        return site;
+    }
+
+    public void setSite(String site) {
+        this.site = site;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 }

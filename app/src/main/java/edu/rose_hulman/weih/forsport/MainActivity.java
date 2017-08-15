@@ -1,12 +1,16 @@
 package edu.rose_hulman.weih.forsport;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -19,12 +23,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,6 +40,17 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,FragmentsEventListener, GoogleApiClient.OnConnectionFailedListener {
@@ -41,6 +59,9 @@ public class MainActivity extends AppCompatActivity
     private NavigationView mNavView;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthLis;
+    private FirebaseDatabase mFB;
+    private FirebaseStorage mFS;
+    private String userIDinFB;
     OnCompleteListener mOnCompleteListener;
     GoogleApiClient mGoogleApiClient;
     private static final int RC_GOOGLE_SIGN_IN = 1;
@@ -55,7 +76,8 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mAuth = FirebaseAuth.getInstance();
-
+        mFB = FirebaseDatabase.getInstance();
+        mFS = FirebaseStorage.getInstance();
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -73,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        mNavView = (NavigationView) findViewById(R.id.nav_view); //TODO
+        mNavView = (NavigationView) findViewById(R.id.nav_view);
         mNavView.setNavigationItemSelectedListener(this);
 
         initializeListeners();
@@ -82,7 +104,8 @@ public class MainActivity extends AppCompatActivity
 
         if (savedInstanceState == null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Fragment fragment = new ListTypeFragment();
+            Fragment fragment = ListActivityFragment.newInstance("Tennis"); //HardCode here
+            currentType = "Tennis";  //Hardcode Here
             ft.add(R.id.fragment_container, fragment);
             ft.commit();
         }
@@ -95,9 +118,10 @@ public class MainActivity extends AppCompatActivity
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
-                Log.e("TTT","Users: "+ user);
+
                 if(user != null){
-                    switchToUserNav(user.getUid());
+                    Log.e("TTT","Users: "+ user.getEmail());
+                    switchToUserNav(user);
                 }else {
                     switchToLoginNav();
                 }
@@ -131,7 +155,13 @@ public class MainActivity extends AppCompatActivity
 
     private void showLoginError(String message) {
         LoginFragment loginFragment = (LoginFragment) getSupportFragmentManager().findFragmentByTag(getString(R.string.TagLogin));
-        loginFragment.onLoginError(message);
+        if(loginFragment!= null){
+            loginFragment.onLoginError(message);
+        }else{
+            new AlertDialog.Builder(this).setTitle(R.string.googleloginfailed)
+                    .setNegativeButton(android.R.string.cancel, null).show();
+        }
+
     }
 
     private void switchToLoginNav() {
@@ -144,14 +174,108 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void switchToUserNav(String uid) {
+    private void switchToUserNav(final FirebaseUser user) {
         TextView ntv = (TextView) mNavView.getHeaderView(0).findViewById(R.id.navUsername);
         TextView ttv = (TextView) mNavView.getHeaderView(0).findViewById(R.id.navAccounttype);
-        ntv.setText(uid);
-        ttv.setText(R.string.forsportdes);
+        userIDinFB = "";
+        mFB.getReference().child("reg").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,String> regmap = (HashMap<String, String>) dataSnapshot.getValue();
+                if(regmap.keySet().contains(user.getUid())){
+                    userIDinFB = (String) regmap.get(user.getUid());
+                    CompleteLogin(user);
+                }else {
+                    int size = regmap.size()+1;
+                    StringBuilder sb = new StringBuilder();
+                    int numof0 = 9-(size/10);
+                    for(int i = 0; i < numof0 ; i++){
+                        sb.append(0);
+                    }
+                    sb.append(size);
+                    userIDinFB = sb.toString();
+                    mFB.getReference().child("reg").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.getValue() == null){
+                                mFB.getReference().child("reg").child(user.getUid()).setValue(userIDinFB, new DatabaseReference.CompletionListener() {
+                                    @Override
+                                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                                        CompleteLogin(user);
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void CompleteLogin(final FirebaseUser user) {
+        final TextView ntv = (TextView) mNavView.getHeaderView(0).findViewById(R.id.navUsername);
+        final TextView ttv = (TextView) mNavView.getHeaderView(0).findViewById(R.id.navAccounttype);
+        final ImageView niv = (ImageView) mNavView.getHeaderView(0).findViewById(R.id.navimageView);
+        final DatabaseReference curref = mFB.getReference().child("users").child(userIDinFB);
+        curref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //HashMap<String,Objects> mUserData = (HashMap<String,Objects>) dataSnapshot.getValue();
+                if(dataSnapshot.getValue()!= null){
+                    mUser = new User();
+                    HashMap<String,String> mUserData = (HashMap<String,String>) dataSnapshot.getValue();
+                    mUser.setName(mUserData.get("name"));
+                    mUser.setPhonenum(mUserData.get("phonenum"));
+                    mUser.setEmail(mUserData.get("email"));
+                    mUser.setID(userIDinFB);
+                    ntv.setText(mUser.getName());
+                    ttv.setText(mUser.getEmail());
+                    StorageReference imagerf = mFS.getReference().child("users").child(String.valueOf(userIDinFB)+".png");
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    imagerf.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                            niv.setImageBitmap(bitmap);
+                            mUser.setImage(bitmap);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                        }
+                    });
+                }else {
+                    mUser = new User(user);
+                    mUser.setID(userIDinFB);
+                    ntv.setText(mUser.getName());
+                    ttv.setText(mUser.getEmail());
+                    curref.child("name").setValue(mUser.getName());
+                    curref.child("gender").setValue(String.valueOf(mUser.getGender()));
+                    curref.child("email").setValue(mUser.getEmail());
+                    curref.child("des").setValue(mUser.getDes());
+                    curref.child("phonenum").setValue(mUser.getPhonenum());
+                    SettingAccount();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         mNavView.getMenu().clear();
         mNavView.inflateMenu(R.menu.activity_main_drawer);
-        mUser = new User(uid);
     }
 
     @Override
@@ -234,21 +358,31 @@ public class MainActivity extends AppCompatActivity
                 ft.commit();
                 return true;
             case R.id.nav_setting:
-                Fragment sfragment = SettingFragment.newInstance(mUser);
-                ft.replace(R.id.fragment_container, sfragment);
-                ft.addToBackStack("detail");
-                ft.commit();
+                SettingAccount();
                 return true;
             case R.id.nav_logout:
                 mAuth.signOut();
+                mUser = null;
+                userIDinFB = "";
+                getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                Fragment nfragment = ListActivityFragment.newInstance("Tennis");
+                ft.replace(R.id.fragment_container,nfragment);
+                ft.commit();
                 return true;
-
         }
 
 
 
 
         return true;
+    }
+
+    private void SettingAccount() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment sfragment = SettingFragment.newInstance(mUser,userIDinFB);
+        ft.replace(R.id.fragment_container, sfragment);
+        ft.addToBackStack("detail");
+        ft.commit();
     }
 
     private void StartLogin() {
@@ -274,10 +408,11 @@ public class MainActivity extends AppCompatActivity
         Log.e("RTT",at);
         if(at.equals(getResources().getString(R.string.Schedule))){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Fragment fragment = ListScheduleFragment.newInstance(currentType);
+            Fragment fragment = ListScheduleFragment.newInstance(mUser);
             ft.replace(R.id.fragment_container, fragment);
             ft.addToBackStack("detail");
             ft.commit();
+
         }else if(at.equals(getResources().getString(R.string.JoinMatch))){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             Fragment fragment = ListCompetetionFragment.newInstance(currentType,currentType);
@@ -291,6 +426,14 @@ public class MainActivity extends AppCompatActivity
             ft.addToBackStack("detail");
             ft.commit();
         }
+    }
+
+    public void SchedulingAGame(User obj) {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        Fragment fragment = ListScheduleFragment.newInstance(this.mUser, obj);
+        ft.replace(R.id.fragment_container, fragment);
+        ft.addToBackStack("detail");
+        ft.commit();
     }
 
 
@@ -358,27 +501,121 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void UserDataChanged(User user) {
-        mUser = user;
+    public void UserDataChanged(User user, boolean change) {
+        mUser.setEmail(user.getEmail());
+        mUser.setPhonenum(user.getPhonenum());
+        mUser.setName(user.getName());
+        if(change){
+            mUser.setImage(user.getImage());
+        }
         TextView ntv = (TextView) mNavView.getHeaderView(0).findViewById(R.id.navUsername);
         TextView ttv = (TextView) mNavView.getHeaderView(0).findViewById(R.id.navAccounttype);
         ImageView iv = (ImageView) mNavView.getHeaderView(0).findViewById(R.id.navimageView);
         ntv.setText(this.mUser.getName());
         ttv.setText(this.mUser.getEmail());
-        iv.setImageURI(this.mUser.getImage());
+        iv.setImageBitmap(this.mUser.getImage());
+
+
+
         super.onBackPressed();
+        mFB.getReference().child("users").child(userIDinFB).child("name").setValue(mUser.getName());
+        mFB.getReference().child("users").child(userIDinFB).child("email").setValue(mUser.getEmail());
+        mFB.getReference().child("users").child(userIDinFB).child("phonenum").setValue(mUser.getPhonenum());
+
+        if(change) {
+            StorageReference mf = mFS.getReference().child("users").child(String.valueOf(userIDinFB) + ".png");
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            mUser.getImage().compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+
+            UploadTask uploadTask = mf.putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.e("TTTAS", exception.toString());
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Log.e("TTTP!A", "done");
+                }
+            });
+        }
+        //TODO check if image exist;
+
+        //TODO put image to firebase
+
+
+
         Log.e("TTT", this.mUser.toString());
+    }
+
+    @Override
+    public void mark(ForSportData mdata) {
+        Toast.makeText(this, R.string.Mark,Toast.LENGTH_SHORT).show();
+        DatabaseReference curref = FirebaseDatabase.getInstance().getReference().child("users").child(userIDinFB).child("mMark");
+        if(mdata.getClass() == Site.class){
+            curref.child("S"+mdata.getID()).setValue("");
+        }else if(mdata.getClass() == User.class){
+            curref.child("U"+mdata.getID()).setValue("");
+        }else if(mdata.getClass() == Competition.class){
+            curref.child("C"+mdata.getID()).setValue("");
+        }else if(mdata.getClass() == TrainingPlan.class){
+            curref.child("T"+mdata.getID()).setValue("");
+        }
+    }
+
+    @Override
+    public void GetTraining(TrainingPlan mTp, Site mSt, User mCoach) {
+        String tempID = mTp.getID()+mUser.getID();
+        DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference().child("events").child(tempID);
+        tempRef.child("name").setValue(mTp.getName() + " for " + mUser.getName());
+        tempRef.child("site").setValue(mSt.getID());
+        tempRef.child("startdate").setValue(mTp.getStartdate());
+        tempRef.child("enddate").setValue(mTp.getEnddate());
+        tempRef.child("currentEvent").setValue(mTp.getID());
+        tempRef.child("mholders").child(mCoach.getID()).setValue("");
+        tempRef.child("mplayers").child(mUser.getID()).setValue("");
+
+        FirebaseDatabase.getInstance().getReference().child("users").child(mUser.getID()).child("mEvent").child(tempID).setValue("");
+        FirebaseDatabase.getInstance().getReference().child("users").child(mCoach.getID()).child("mEvent").child(tempID).setValue("");
+    }
+
+    @Override
+    public void JoinComp(Competition mCom) {
+        String tempID = mCom.getID();
+        DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference().child("events").child(tempID);
+        tempRef.child("name").setValue(mCom.getName());
+        tempRef.child("site").setValue(mCom.getSite());
+        tempRef.child("startdate").setValue(mCom.getStartdate());
+        tempRef.child("enddate").setValue(mCom.getEnddate());
+        tempRef.child("currentEvent").setValue(mCom.getID());
+        tempRef.child("mholders").child(mCom.getHolder()).setValue("");
+        tempRef.child("mplayers").child(mUser.getID()).setValue("");
+        FirebaseDatabase.getInstance().getReference().child("users").child(mUser.getID()).child("mEvent").child(tempID).setValue("");
+        FirebaseDatabase.getInstance().getReference().child("users").child(mCom.getHolder()).child("mEvent").child(tempID).setValue("");
+    }
+
+    @Override
+    public void scheduleAGame(String text, User user, Site site) {
+        String tempID = mUser.getID()+user.getID()+text;
+        DatabaseReference tempRef = FirebaseDatabase.getInstance().getReference().child("events").child(tempID);
+        tempRef.child("name").setValue(user.getName()+ " Vs "+ mUser.getName() + " On " + text);
+        tempRef.child("site").setValue(site.getID());
+        tempRef.child("startdate").setValue(text);
+        tempRef.child("enddate").setValue(text);
+        tempRef.child("mplayers").child(mUser.getID()).setValue("");
+        tempRef.child("mplayers").child(user.getID()).setValue("");
+        FirebaseDatabase.getInstance().getReference().child("users").child(mUser.getID()).child("mEvent").child(tempID).setValue("");
+        FirebaseDatabase.getInstance().getReference().child("users").child(user.getID()).child("mEvent").child(tempID).setValue("");
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_GOOGLE_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
-                // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
@@ -389,7 +626,6 @@ public class MainActivity extends AppCompatActivity
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d("TTT", "firebaseAuthWithGoogle:" + acct.getId());
-
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this,mOnCompleteListener);

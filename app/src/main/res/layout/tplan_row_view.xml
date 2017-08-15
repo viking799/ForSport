@@ -50,15 +50,6 @@
             android:layout_toLeftOf="@id/coa_image_view"
             android:text="19000000-19000000" />
 
-        <TextView
-            android:id="@+id/time_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:layout_below="@+id/date_text_view"
-            android:layout_toLeftOf="@id/coa_image_view"
-            android:text="0600-0800" />
-
 
         <TextView
             android:id="@+id/cname_text_view"
@@ -69,25 +60,6 @@
             android:layout_toRightOf="@+id/Pname_text_view"
             android:gravity="left"
             android:text="TextView" />
-
-
-        <RatingBar
-            android:id="@+id/ratingBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/date_text_view"
-            android:layout_toLeftOf="@id/coa_image_view"
-
-            android:numStars="5"
-            android:scaleX="0.75"
-            android:scaleY="0.75"
-            android:transformPivotX="0dp"
-            android:transformPivotY="110dp"
-            android:layout_alignBottom="@id/cname_text_view"
-            />
-
-
-
 
 
     </RelativeLayout>

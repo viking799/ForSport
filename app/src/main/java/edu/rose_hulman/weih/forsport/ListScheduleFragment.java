@@ -2,6 +2,8 @@ package edu.rose_hulman.weih.forsport;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -22,16 +24,29 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 
 public class ListScheduleFragment extends Fragment {
     private static final String ARG_SCHEDULE = "scheduleageamegas";
-    private String curtype;
+    private static final String ARG_OBJ = "scheduleageamegasobj";
+    private User mUser;
     private HeadimageSiteAdapter HSAP;
     private HeadimageUserAdapter HUAP;
     private TextView DTV;
@@ -39,17 +54,20 @@ public class ListScheduleFragment extends Fragment {
     private int SiteSelectPosition = -1;
     private FragmentsEventListener mListener;
 
-    private ArrayList<Long> SiteSelectresult;
-    private ArrayList<Long> UserSelectresult;
+    private ArrayList<String> SiteSelectresult = new ArrayList<>();
+    private ArrayList<String> UserSelectresult = new ArrayList<>();
+    private Site SiteSelected;
+    private User UserSelected;
 
 
     public ListScheduleFragment() {
     }
 
-    public static ListScheduleFragment newInstance(String currenttype) {
+    public static ListScheduleFragment newInstance(User user) {
         ListScheduleFragment fragment = new ListScheduleFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_SCHEDULE,currenttype);
+        args.putParcelable(ARG_SCHEDULE,user);
+        args.putParcelable(ARG_OBJ, null);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,18 +76,18 @@ public class ListScheduleFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            curtype = getArguments().getString(ARG_SCHEDULE);
+            mUser = getArguments().getParcelable(ARG_SCHEDULE);
+            UserSelected = getArguments().getParcelable(ARG_OBJ);
+            if(UserSelected!=null){
+                selectAUser();
+            }
         }
-        HSAP = new HeadimageSiteAdapter(mListener,getContext(),curtype);
-        HUAP = new HeadimageUserAdapter(mListener,getContext(),curtype);
-
-
-        //TODO
-        String sa = "A000001";
-        String sb = "B000001";
-
-        Log.e("TTTT",String.valueOf(Long.valueOf(sa.substring(1))==Long.valueOf(sb.substring(1))));
-
+        String cID = "-1";
+        if(mUser != null){
+            cID = mUser.getID();
+        }
+        HSAP = new HeadimageSiteAdapter(mListener,getContext(),cID);
+        HUAP = new HeadimageUserAdapter(mListener,getContext(),cID);
     }
 
     @Override
@@ -87,7 +105,7 @@ public class ListScheduleFragment extends Fragment {
         recyclerViewS.setAdapter(HSAP);
         DTV = (TextView) view.findViewById(R.id.date_text_view);
         Calendar calendar = Calendar.getInstance();
-        DTV.setText(calendar.get(Calendar.DAY_OF_MONTH)+"-"+calendar.get(Calendar.MONTH)+"-"+calendar.get(Calendar.YEAR));
+        DTV.setText(calendar.get(Calendar.YEAR)+"-"+calendar.get(Calendar.MONTH)+"-"+calendar.get(Calendar.DAY_OF_MONTH));
         DTV.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,13 +124,23 @@ public class ListScheduleFragment extends Fragment {
                 builder.setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        DTV.setText(calendar.get(Calendar.DAY_OF_MONTH)+"-"+calendar.get(Calendar.MONTH)+"-"+calendar.get(Calendar.YEAR));
+                        DTV.setText(calendar.get(Calendar.YEAR)+"-"+calendar.get(Calendar.MONTH)+"-"+calendar.get(Calendar.DAY_OF_MONTH));
                     }
                 }).setNegativeButton(android.R.string.cancel,null);
                 builder.show();
             }
         });
         Button bt  = (Button) view.findViewById(R.id.button);
+        bt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(SiteSelected == null || UserSelected == null ){
+                    Toast.makeText(getContext(),"Please select a user and site.",Toast.LENGTH_LONG).show();
+                }else {
+                    mListener.scheduleAGame((String) DTV.getText(),UserSelected,SiteSelected);
+                }
+            }
+        });
         return view;
     }
 
@@ -144,6 +172,15 @@ public class ListScheduleFragment extends Fragment {
         mListener = null;
     }
 
+    public static Fragment newInstance(User mUser, User obj) {
+        ListScheduleFragment fragment = new ListScheduleFragment();
+        Bundle args = new Bundle();
+        args.putParcelable(ARG_SCHEDULE,mUser);
+        args.putParcelable(ARG_OBJ,obj);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public class HeadimageSiteAdapter extends RecyclerView.Adapter<HeadimageSiteAdapter.ViewHolder>{
 
         private List<Site> mSite;
@@ -151,18 +188,56 @@ public class ListScheduleFragment extends Fragment {
         private Context mContext;
         private String mtype;
 
-        public HeadimageSiteAdapter(FragmentsEventListener listener, Context context, String Sporttype) {
+        public HeadimageSiteAdapter(FragmentsEventListener listener, Context context, final String Sporttype) {
             mListener = listener;
             mContext = context;
-            mSite = Hardcodefortest.sitelist();
+            mSite = new ArrayList<>();
             mtype = Sporttype;
 
+            FirebaseDatabase.getInstance().getReference().child("sites").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    final Site temp = dataSnapshot.getValue(Site.class);
+                    temp.setID(dataSnapshot.getKey());
+                    mSite.add(temp);
+                    StorageReference imagerf = FirebaseStorage.getInstance().getReference().child("sites").child(String.valueOf(temp.getID()) + ".png");
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    imagerf.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            temp.setImage(bitmap);
+                            notifyDataSetChanged();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            Log.e("SSS", exception.toString()+ "?");
+                        }
+                    });
+                }
 
-            mSite.get(0).setID("00001");
-            mSite.get(1).setID("00002");
-            mSite.get(2).setID("00003");
-            mSite.get(3).setID("00004");
-            mSite.get(4).setID("00005");
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
         }
 
         @Override
@@ -183,8 +258,9 @@ public class ListScheduleFragment extends Fragment {
         public void onBindViewHolder(HeadimageSiteAdapter.ViewHolder holder, int position) {
             Site mt = mSite.get(position);
             holder.nTV.setText(mt.getName());
-            if(UserSelectPosition != -1){
-                if(!UserSelectresult.contains(Long.valueOf(mt.getID()))){
+            holder.iV.setImageBitmap(mt.getImage());
+            if(UserSelected != null){
+                if(!UserSelectresult.contains(mt.getID())){
                     holder.itemView.setBackgroundColor(Color.GRAY);
                 }else {
                     holder.itemView.setBackgroundColor(Color.WHITE);
@@ -192,8 +268,10 @@ public class ListScheduleFragment extends Fragment {
             }else {
                 holder.itemView.setBackgroundColor(Color.WHITE);
             }
-            if(SiteSelectPosition == position){
-                holder.itemView.setBackgroundColor(Color.YELLOW);
+            if(SiteSelected!=null) {
+                if (SiteSelected.getID().equals(mt.getID())) {
+                    holder.itemView.setBackgroundColor(Color.YELLOW);
+                }
             }
         }
 
@@ -212,8 +290,9 @@ public class ListScheduleFragment extends Fragment {
             public void onClick(final View siteview) {
 
                 if(UserSelectPosition!= -1){
-                    if (UserSelectresult.contains(Long.valueOf(mSite.get(getAdapterPosition()).getID()))){
+                    if (UserSelectresult.contains(mSite.get(getAdapterPosition()).getID())){
                         SiteSelectPosition = getAdapterPosition();
+                        SiteSelected = mSite.get(getAdapterPosition());
                         selectASite();
                     }else{
                         new AlertDialog.Builder(getContext()).setTitle(R.string.PlaySiteNotMatch)
@@ -221,13 +300,16 @@ public class ListScheduleFragment extends Fragment {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         UserSelectPosition = -1;
+                                        UserSelected = null;
                                         SiteSelectPosition = getAdapterPosition();
+                                        SiteSelected = mSite.get(getAdapterPosition());
                                         selectASite();
                                     }
                                 }).setNegativeButton(android.R.string.cancel, null).show();
                     }
                 }else {
                     SiteSelectPosition = getAdapterPosition();
+                    SiteSelected = mSite.get(getAdapterPosition());
                     selectASite();
                 }
             }
@@ -246,13 +328,55 @@ public class ListScheduleFragment extends Fragment {
         public HeadimageUserAdapter(FragmentsEventListener listener, Context context, String Sporttype) {
             mListener = listener;
             mContext = context;
-            mUsers = Hardcodefortest.matchuserlist();
-            mUsers.get(0).setID("00001");
-            mUsers.get(1).setID("00002");
-            mUsers.get(2).setID("00003");
-            mUsers.get(3).setID("00004");
-            mUsers.get(4).setID("00005");
+            mUsers = new ArrayList<>();
             mtype = Sporttype;
+
+            FirebaseDatabase.getInstance().getReference().child("users").addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    if (!dataSnapshot.getKey().equals(mUser.getID())) {
+                        final User temp = dataSnapshot.getValue(User.class);
+                        temp.setID(dataSnapshot.getKey());
+                        mUsers.add(temp);
+                        StorageReference imagerf = FirebaseStorage.getInstance().getReference().child("users").child(String.valueOf(temp.getID()) + ".png");
+                        final long ONE_MEGABYTE = 1024 * 1024;
+                        imagerf.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                            @Override
+                            public void onSuccess(byte[] bytes) {
+                                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                temp.setImage(bitmap);
+                                notifyDataSetChanged();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception exception) {
+                                Log.e("SSS", exception.toString() + "?");
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
         }
 
         @Override
@@ -273,8 +397,10 @@ public class ListScheduleFragment extends Fragment {
         public void onBindViewHolder(HeadimageUserAdapter.ViewHolder holder, int position) {
             User mt = mUsers.get(position);
             holder.nTV.setText(mt.getName());
-            if(SiteSelectPosition != -1){
-                if(!SiteSelectresult.contains(Long.valueOf(mt.getID()))){
+            holder.iV.setImageBitmap(mt.getImage());
+            
+            if(SiteSelected != null){
+                if(!SiteSelectresult.contains(mt.getID())){
                     holder.itemView.setBackgroundColor(Color.GRAY);
                 }else {
                     holder.itemView.setBackgroundColor(Color.WHITE);
@@ -282,8 +408,10 @@ public class ListScheduleFragment extends Fragment {
             }else {
                 holder.itemView.setBackgroundColor(Color.WHITE);
             }
-            if(UserSelectPosition == position){
-                holder.itemView.setBackgroundColor(Color.YELLOW);
+            if(UserSelected!= null) {
+                if (UserSelected.getID().equals(mt.getID())) {
+                    holder.itemView.setBackgroundColor(Color.YELLOW);
+                }
             }
         }
 
@@ -301,8 +429,9 @@ public class ListScheduleFragment extends Fragment {
             @Override
             public void onClick(final View userview) {
                 if(SiteSelectPosition!= -1){
-                    if (SiteSelectresult.contains(Long.valueOf(mUsers.get(getAdapterPosition()).getID()))){
+                    if (SiteSelectresult.contains(mUsers.get(getAdapterPosition()).getID())){
                         UserSelectPosition = getAdapterPosition();
+                        UserSelected = mUsers.get(getAdapterPosition());
                         selectAUser();
                     }else{
                         new AlertDialog.Builder(getContext()).setTitle(R.string.PlaySiteNotMatch)
@@ -310,13 +439,16 @@ public class ListScheduleFragment extends Fragment {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         SiteSelectPosition = -1;
+                                        SiteSelected = null;
                                         UserSelectPosition = getAdapterPosition();
+                                        UserSelected = mUsers.get(getAdapterPosition());
                                         selectAUser();
                                     }
                                 }).setNegativeButton(android.R.string.cancel, null).show();
                     }
                 }else {
                     UserSelectPosition = getAdapterPosition();
+                    UserSelected = mUsers.get(getAdapterPosition());
                     selectAUser();
                 }
             }
@@ -326,64 +458,42 @@ public class ListScheduleFragment extends Fragment {
 
     private void selectASite() {
         SiteSelectresult  = new ArrayList<>();
-        switch (SiteSelectPosition){
-            case 0:
-                SiteSelectresult.add(Long.valueOf("00001"));
-                SiteSelectresult.add(Long.valueOf("00002"));
-                break;
-            case 1:
-                SiteSelectresult.add(Long.valueOf("00003"));
-                SiteSelectresult.add(Long.valueOf("00002"));
-                break;
-            case 2:
-                SiteSelectresult.add(Long.valueOf("00003"));
-                SiteSelectresult.add(Long.valueOf("00004"));
-                break;
-            case 3:
-                SiteSelectresult.add(Long.valueOf("00004"));
-                SiteSelectresult.add(Long.valueOf("00005"));
-                break;
-            case 4:
-                SiteSelectresult.add(Long.valueOf("00001"));
-                SiteSelectresult.add(Long.valueOf("00005"));
-                break;
-            case -1:
-                break;
-        }
-        HUAP.notifyDataSetChanged();
-        HSAP.notifyDataSetChanged();
+        FirebaseDatabase.getInstance().getReference().child("sites").child(SiteSelected.getID()).child("users").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,String> mm = (HashMap<String, String>) dataSnapshot.getValue();
+                for(String m :mm.keySet()){
+                    SiteSelectresult.add(m);
+                }
+                HUAP.notifyDataSetChanged();
+                HSAP.notifyDataSetChanged();
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
     }
 
     private void selectAUser() {
         UserSelectresult  = new ArrayList<>();
-        switch (UserSelectPosition){
-            case 0:
-                UserSelectresult.add(Long.valueOf("00001"));
-                UserSelectresult.add(Long.valueOf("00005"));
-                break;
-            case 1:
-                UserSelectresult.add(Long.valueOf("00001"));
-                UserSelectresult.add(Long.valueOf("00002"));
-                break;
-            case 2:
-                UserSelectresult.add(Long.valueOf("00003"));
-                UserSelectresult.add(Long.valueOf("00002"));
-                break;
-            case 3:
-                UserSelectresult.add(Long.valueOf("00004"));
-                UserSelectresult.add(Long.valueOf("00003"));
-                break;
-            case 4:
-                UserSelectresult.add(Long.valueOf("00004"));
-                UserSelectresult.add(Long.valueOf("00005"));
-                break;
-            case -1:
-                break;
-        }
-        HSAP.notifyDataSetChanged();
-        HUAP.notifyDataSetChanged();
+        FirebaseDatabase.getInstance().getReference().child("users").child(UserSelected.getID()).child("mTrack").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                HashMap<String,String> mm = (HashMap<String, String>) dataSnapshot.getValue();
+                for(String m :mm.keySet()){
+                    UserSelectresult.add(m);
+                }
+                HUAP.notifyDataSetChanged();
+                HSAP.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

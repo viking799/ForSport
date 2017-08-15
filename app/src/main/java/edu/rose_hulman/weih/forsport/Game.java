@@ -11,13 +11,14 @@ import java.util.ArrayList;
 
 public class Game implements ForSportEvent,Parcelable {
     private String name;
-    private ForSportData currentEvent;
-    private ArrayList<User> Holders = (ArrayList<User>) Hardcodefortest.matchuserlist();
-    private ArrayList<User> players = (ArrayList<User>) Hardcodefortest.matchuserlist();
-    private Site site = new Site("Site1");
-    private long startdate = 19999999;
-    private long enddate = 19999999;
+    private String currentEvent;
+    private ArrayList<User> Holders = new ArrayList<>();
+    private ArrayList<User> players = new ArrayList<>();
+    private String site;
+    private String startdate = "19999999";
+    private String enddate = "19999999";
     private String remarks = "";
+    private String ID;
 
 
     public Game(String name) {
@@ -28,10 +29,11 @@ public class Game implements ForSportEvent,Parcelable {
         name = in.readString();
         Holders = in.createTypedArrayList(User.CREATOR);
         players = in.createTypedArrayList(User.CREATOR);
-        site = in.readParcelable(Site.class.getClassLoader());
-        startdate = in.readLong();
-        enddate = in.readLong();
+        site = in.readString();
+        startdate = in.readString();
+        enddate = in.readString();
         remarks = in.readString();
+        ID = in.readString();
     }
 
     public static final Creator<Game> CREATOR = new Creator<Game>() {
@@ -46,6 +48,9 @@ public class Game implements ForSportEvent,Parcelable {
         }
     };
 
+    public Game() {
+    }
+
     public String getName() {
         return name;
     }
@@ -54,11 +59,11 @@ public class Game implements ForSportEvent,Parcelable {
         this.name = name;
     }
 
-    public ForSportData getCurrentEvent() {
+    public String getCurrentEvent() {
         return currentEvent;
     }
 
-    public void setCurrentEvent(ForSportData currentEvent) {
+    public void setCurrentEvent(String currentEvent) {
         this.currentEvent = currentEvent;
     }
 
@@ -78,27 +83,27 @@ public class Game implements ForSportEvent,Parcelable {
         this.players = players;
     }
 
-    public Site getSite() {
+    public String getSite() {
         return site;
     }
 
-    public void setSite(Site site) {
+    public void setSite(String site) {
         this.site = site;
     }
 
-    public long getStartdate() {
+    public String getStartdate() {
         return startdate;
     }
 
-    public void setStartdate(long startdate) {
+    public void setStartdate(String startdate) {
         this.startdate = startdate;
     }
 
-    public long getEnddate() {
+    public String getEnddate() {
         return enddate;
     }
 
-    public void setEnddate(long enddate) {
+    public void setEnddate(String enddate) {
         this.enddate = enddate;
     }
 
@@ -108,6 +113,14 @@ public class Game implements ForSportEvent,Parcelable {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
     }
 
     @Override
@@ -120,9 +133,10 @@ public class Game implements ForSportEvent,Parcelable {
         dest.writeString(name);
         dest.writeTypedList(Holders);
         dest.writeTypedList(players);
-        dest.writeParcelable(site, flags);
-        dest.writeLong(startdate);
-        dest.writeLong(enddate);
+        dest.writeString(site);
+        dest.writeString(startdate);
+        dest.writeString(enddate);
         dest.writeString(remarks);
+        dest.writeString(ID);
     }
 }

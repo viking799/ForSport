@@ -8,8 +8,8 @@ public interface ForSportEvent {
     String name = null;
     ForSportData CurrentEvent = null;
 
-    void setCurrentEvent(ForSportData data);
+    void setCurrentEvent(String data);
 
     String getName();
-    ForSportData getCurrentEvent();
+    String getCurrentEvent();
 }

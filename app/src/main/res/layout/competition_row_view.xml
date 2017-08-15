@@ -45,16 +45,6 @@
             android:text="locationbrabrabra" />
 
         <TextView
-            android:id="@+id/phone_text_view"
-            android:layout_width="160sp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/loc_text_view"
-            android:layout_marginLeft="12sp"
-            android:layout_marginBottom="12dp"
-            android:text="+(86)12312341234"
-            android:gravity="center"/>
-
-        <TextView
             android:id="@+id/date_text_view"
             android:layout_below="@+id/loc_text_view"
             android:layout_toRightOf="@+id/phone_text_view"

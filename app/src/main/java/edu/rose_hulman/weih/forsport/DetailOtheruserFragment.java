@@ -1,13 +1,17 @@
 package edu.rose_hulman.weih.forsport;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,11 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 
 public class DetailOtheruserFragment extends Fragment {
@@ -54,12 +63,12 @@ public class DetailOtheruserFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_otheruserdetail, container, false);
         TextView mTV = (TextView) view.findViewById(R.id.name_text_view);
-        ImageView iV = (ImageView) view.findViewById(R.id.com_image_view);
+        final ImageView iV = (ImageView) view.findViewById(R.id.com_image_view);
         TextView lTV = (TextView) view.findViewById(R.id.loc_text_view);
         TextView pTV = (TextView) view.findViewById(R.id.phone_text_view);
-        TextView aTV = (TextView) view.findViewById(R.id.age_text_view);
-        TextView gTV = (TextView) view.findViewById(R.id.gen_text_view);
-        TextView hTV = (TextView) view.findViewById(R.id.honour_text_view);
+        TextView eTV = (TextView) view.findViewById(R.id.email_text_view);
+        TextView dTV = (TextView) view.findViewById(R.id.des_text_view);
+        //TextView hTV = (TextView) view.findViewById(R.id.honour_text_view);
         Button mbt = (Button) view.findViewById(R.id.mark_button);
         Button sbt = (Button) view.findViewById(R.id.seg_button);
         Button gbt= (Button) view.findViewById(R.id.get_button);
@@ -67,35 +76,43 @@ public class DetailOtheruserFragment extends Fragment {
         mTV.setText(mUser.getName());
         lTV.setText(mUser.getLocation());
         pTV.setText(mUser.getPhonenum());
-        aTV.setText(String.valueOf(mUser.getAge()));
-        if(mUser.isGender()){
-            gTV.setText(R.string.Male);
-        }else{
-            gTV.setText(R.string.Female);
+        eTV.setText(mUser.getEmail());
+        dTV.setText(mUser.getDes());
+        if(mUser.getImage()!= null){
+            iV.setImageBitmap(mUser.getImage());
+        }else {
+            StorageReference imagerf = FirebaseStorage.getInstance().getReference().child("users").child(String.valueOf(mUser.getID()) + ".png");
+            final long ONE_MEGABYTE = 1024 * 1024;
+            imagerf.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    iV.setImageBitmap(bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.e("SSS", exception.toString()+ "?"+ mUser.getID());
+                }
+            });
         }
-        //hTV.setText(mCom.getHolder());
-
         mbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(),R.string.Mark,
-                        Toast.LENGTH_SHORT).show();
+                mListener.mark(mUser);
             }
         });
 
         sbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), R.string.Register,
-                        Toast.LENGTH_SHORT).show();
+                mListener.SchedulingAGame(mUser);
             }
         });
 
         gbt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Toast.makeText(getContext(), R.string.get_his_her_trainning,
-//                        Toast.LENGTH_SHORT).show();
                 mListener.SelectTrainingFromUser(mUser);
 
             }

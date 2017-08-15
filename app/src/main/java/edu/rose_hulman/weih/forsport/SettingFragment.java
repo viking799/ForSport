@@ -38,6 +38,7 @@ public class SettingFragment extends Fragment {
     private static final int SELECTED_PICTURE = 101;
     private User mUser;
     private Uri uri = null;
+    private Bitmap bitmap = null;
     private FragmentsEventListener mListener;
     private ImageView iv;
     private TextView nTV;
@@ -45,7 +46,7 @@ public class SettingFragment extends Fragment {
     private TextView eTV;
     public SettingFragment() {}
 
-    public static SettingFragment newInstance(User user) {
+    public static SettingFragment newInstance(User user, String userIDinFB) {
         SettingFragment fragment = new SettingFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_USERFORSETTING,user);
@@ -66,6 +67,7 @@ public class SettingFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_setting, container, false);
         iv = (ImageView) view.findViewById(R.id.HeadimageView);
+        iv.setImageBitmap(mUser.getImage());
         nTV = (TextView) view.findViewById(R.id.name_text_view);
         nTV.setText(mUser.getName());
         pTV = (TextView) view.findViewById(R.id.phone_text_view);
@@ -107,19 +109,18 @@ public class SettingFragment extends Fragment {
                 Comfirm();
             }
         });
-
         return view;
     }
 
     private void Comfirm() {
-        if(uri!=null){
-            mUser.setImage(uri);
+        if(bitmap!=null){
+            mUser.setImage(bitmap);
         }
         mUser.setName(nTV.getText().toString());
         mUser.setPhonenum(pTV.getText().toString());
         mUser.setEmail(eTV.getText().toString());
         Log.e("TTT",mUser.toString());
-        mListener.UserDataChanged(mUser);
+        mListener.UserDataChanged(mUser,(bitmap!=null));
     }
 
     private void onEdit1() {
@@ -129,6 +130,7 @@ public class SettingFragment extends Fragment {
         builder.setView(view);
         final EditText myText = (EditText) view.findViewById(R.id.dialog_add_quote_text);
         myText.setHint(R.string.EnternameHint);
+        myText.setText(mUser.getName());
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -146,6 +148,7 @@ public class SettingFragment extends Fragment {
         final EditText myText = (EditText) view.findViewById(R.id.dialog_add_quote_text);
         myText.setInputType(InputType.TYPE_CLASS_NUMBER);
         myText.setHint(R.string.EnterPhonehint);
+        myText.setText(mUser.getPhonenum());
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -162,6 +165,7 @@ public class SettingFragment extends Fragment {
         builder.setView(view);
         final EditText myText = (EditText) view.findViewById(R.id.dialog_add_quote_text);
         myText.setHint(R.string.EnterEmailHint);
+        myText.setText(mUser.getEmail());
         builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -171,7 +175,6 @@ public class SettingFragment extends Fragment {
                 }else {
                     new AlertDialog.Builder(getContext()).setTitle("Not a Valid Email Address").setNegativeButton(android.R.string.cancel, null).show();
                 }
-
             }
         });
         builder.setNegativeButton(android.R.string.cancel, null);
@@ -191,6 +194,7 @@ public class SettingFragment extends Fragment {
                 if(resultCode == RESULT_OK){
                     uri = data.getData();
                     iv.setImageURI(uri);
+                    bitmap = ((BitmapDrawable)iv.getDrawable()).getBitmap();
                 }
                 break;
         }

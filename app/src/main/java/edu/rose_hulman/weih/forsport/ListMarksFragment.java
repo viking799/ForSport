@@ -10,11 +10,20 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -81,12 +90,100 @@ public class ListMarksFragment extends Fragment {
 
         private List<ForSportData> mData;
         private FragmentsEventListener mListener;
+        private DatabaseReference mRef;
         private Context mContext;
 
         public mAdapter(FragmentsEventListener listener, Context context, User user) {
             mListener = listener;
             mContext = context;
-            mData = Hardcodefortest.datalist();
+            mData = new ArrayList<>();
+            mRef = FirebaseDatabase.getInstance().getReference().child("users").child(mUser.getID()).child("mMark");
+            mRef.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    Log.e("SSS1", String.valueOf(mData.size()));
+                    if(dataSnapshot.getKey().contains("S")){
+                        FirebaseDatabase.getInstance().getReference().child("sites").child(dataSnapshot.getKey().substring(1)).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Site mt = dataSnapshot.getValue(Site.class);
+                                mt.setID(dataSnapshot.getKey());
+                                mData.add(mt);
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }else if(dataSnapshot.getKey().contains("U")){
+                        FirebaseDatabase.getInstance().getReference().child("users").child(dataSnapshot.getKey().substring(1)).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                User mt = dataSnapshot.getValue(User.class);
+                                mt.setID(dataSnapshot.getKey());
+                                mData.add(mt);
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }else if(dataSnapshot.getKey().contains("T")){
+                        FirebaseDatabase.getInstance().getReference().child("trans").child(dataSnapshot.getKey().substring(1)).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                TrainingPlan mt = dataSnapshot.getValue(TrainingPlan.class);
+                                mt.setID(dataSnapshot.getKey());
+                                mData.add(mt);
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }else if(dataSnapshot.getKey().contains("C")){
+                        FirebaseDatabase.getInstance().getReference().child("comps").child(dataSnapshot.getKey().substring(1)).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                Competition mt = dataSnapshot.getValue(Competition.class);
+                                mt.setID(dataSnapshot.getKey());
+                                mData.add(mt);
+                                notifyDataSetChanged();
+                            }
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         }
         class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
             private TextView mTV;
@@ -103,8 +200,15 @@ public class ListMarksFragment extends Fragment {
             }
             @Override
             public boolean onLongClick(View v) {
-                //TODO
-                return false;
+                ForSportData removed = mData.remove(getAdapterPosition());
+                if(removed.getClass() == User.class){
+                    mRef.child("U"+removed.getID()).removeValue();
+                }else if(removed.getClass() == Site.class){
+                    mRef.child("S"+removed.getID()).removeValue();
+                }
+                notifyDataSetChanged();
+
+                return true;
             }
         }
 

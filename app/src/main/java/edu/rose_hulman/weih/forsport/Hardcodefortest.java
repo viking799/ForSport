@@ -51,9 +51,9 @@ public class Hardcodefortest {
     public static List<ForSportEvent> gamelist() {
         ArrayList<ForSportEvent> result = new ArrayList<>();
         result.add(new Game("comp 1"));
-        result.get(0).setCurrentEvent(new Competition("Comp1"));
+        //result.get(0).setCurrentEvent(new Competition("Comp1"));
         result.add(new Game("trainning 1"));
-        result.get(1).setCurrentEvent(new TrainingPlan("Plan A"));
+        //result.get(1).setCurrentEvent(new TrainingPlan("Plan A"));
         result.add(new Game("game c"));
         result.add(new Game("game d"));
         result.add(new Game("game e"));

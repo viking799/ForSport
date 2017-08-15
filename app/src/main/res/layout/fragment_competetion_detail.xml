@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:textSize="32sp"
             android:layout_below="@+id/com_image_view"
-            android:gravity="left"
+            android:gravity="center"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
             android:layout_marginBottom="4dp"
@@ -37,9 +37,9 @@
             android:id="@+id/loc_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
+            android:textSize="30sp"
             android:layout_marginLeft="12dp"
-            android:gravity="left"
+            android:gravity="center"
             android:layout_below="@+id/holder_text_view"
             android:text="locationbrabrabra" />
 
@@ -80,7 +80,7 @@
             android:layout_marginRight="12sp"
             android:text="Holder here!!!!"
             android:textSize="30sp"
-            android:gravity="left"
+            android:gravity="center"
              />
 
         <Button

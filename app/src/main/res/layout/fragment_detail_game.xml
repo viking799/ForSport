@@ -15,22 +15,22 @@
         android:textSize="36sp"/>
 
     <TextView
-        android:id="@+id/Eventfront_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/eventfront"
-        android:layout_below="@+id/name_text_view"
-        android:textSize="24sp"
-         />
-
-    <TextView
         android:id="@+id/Event_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="What is the event?"
         android:layout_below="@+id/name_text_view"
-        android:layout_toRightOf="@+id/Eventfront_text_view"
-        android:layout_marginLeft="12sp"
+        android:textSize="24sp"
+        />
+
+
+
+    <TextView
+        android:id="@+id/Site_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="What is the event?"
+        android:layout_below="@+id/Event_text_view"
         android:textSize="24sp"
         />
 
@@ -39,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/initiatorfront"
-        android:layout_below="@+id/Eventfront_text_view"
+        android:layout_below="@+id/Site_text_view"
         android:textSize="24sp" />
 
     <android.support.v7.widget.RecyclerView
@@ -62,6 +62,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/Partfront_text_view"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/date"
+        android:layout_below="@id/part_list_recycler_view"
+        android:textSize="20sp"/>
 
 
 </RelativeLayout>
