@@ -17,8 +17,8 @@ public class User implements Parcelable, ForSportData {
     private int age = 99;
     private String ID = "XXXXXXXXX";
     private String password = "0000099999";
-    private String phonenum = "";
-    private String email = "";
+    private String phonenum = "Your Phone Number";
+    private String email = "Your Email Address";
     private String gender = "M";
     private String location = "";
     private String des = "";

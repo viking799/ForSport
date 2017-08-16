@@ -60,7 +60,7 @@
     <string name="login_with_rosefire">Login with Rosefire</string>
     <string name="TagLogin">login</string>
     <string name="my_marks">My Marks</string>
-    <string name="my_tracks">My Tracks</string>
+    <string name="my_tracks">My Sites</string>
     <string name="my_events">My Events</string>
     <string name="eventfront">Event:</string>
     <string name="initiatorfront">Initiator:</string>
@@ -72,8 +72,9 @@
     <string name="setting">Setting</string>
     <string name="SelectThisPlayerAnyway">Select anyway</string>
     <string name="PlaySiteNotMatch">This player will not play in this site</string>
-    <string name="sent_a_request">Sent A Request</string>
+    <string name="sent_a_request">Schedule the game!</string>
     <string name="googleloginfailed">Google Login Failed</string>
     <string name="sitefront">Site:</string>
     <string name="holderfront">Holder:</string>
+    <string name="main_page">Main Page</string>
 </resources>

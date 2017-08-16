@@ -54,7 +54,7 @@ public class LoginFragment extends Fragment {
         mProgressSpinner = rootView.findViewById(R.id.login_progress);
         View loginButton = rootView.findViewById(R.id.email_sign_in_button);
         mGoogleSignInButton = (SignInButton) rootView.findViewById(R.id.google_sign_in_button);
-        View rosefireLoginButton = rootView.findViewById(R.id.rosefire_sign_in_button);
+        //View rosefireLoginButton = rootView.findViewById(R.id.rosefire_sign_in_button);
         mEmailView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -87,12 +87,6 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 loginWithGoogle();
-            }
-        });
-        rosefireLoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginWithRosefire();
             }
         });
 

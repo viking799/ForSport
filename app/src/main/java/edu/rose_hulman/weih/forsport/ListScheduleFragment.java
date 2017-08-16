@@ -398,7 +398,7 @@ public class ListScheduleFragment extends Fragment {
             User mt = mUsers.get(position);
             holder.nTV.setText(mt.getName());
             holder.iV.setImageBitmap(mt.getImage());
-            
+
             if(SiteSelected != null){
                 if(!SiteSelectresult.contains(mt.getID())){
                     holder.itemView.setBackgroundColor(Color.GRAY);

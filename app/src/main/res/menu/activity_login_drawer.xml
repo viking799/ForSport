@@ -10,14 +10,6 @@
             android:id="@+id/nav_google"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/google_login_in" />
-        <item
-            android:id="@+id/nav_wechat"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/wechat_login_in" />
-        <item
-            android:id="@+id/nav_rose"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/rose_login_in" />
     </group>
 
 

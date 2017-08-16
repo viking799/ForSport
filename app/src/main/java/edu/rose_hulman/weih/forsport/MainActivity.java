@@ -80,15 +80,6 @@ public class MainActivity extends AppCompatActivity
         mFS = FirebaseStorage.getInstance();
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -167,6 +158,8 @@ public class MainActivity extends AppCompatActivity
     private void switchToLoginNav() {
         TextView ntv = (TextView) mNavView.getHeaderView(0).findViewById(R.id.navUsername);
         TextView ttv = (TextView) mNavView.getHeaderView(0).findViewById(R.id.navAccounttype);
+        ImageView iv = (ImageView) mNavView.getHeaderView(0).findViewById(R.id.navimageView);
+        iv.setImageDrawable(null);
         ntv.setText(R.string.app_name);
         ttv.setText(R.string.forsportdes);
         mNavView.getMenu().clear();
@@ -317,7 +310,15 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_main) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            Fragment nfragment = ListActivityFragment.newInstance("Tennis");
+            ImageView iv = (ImageView) mNavView.getHeaderView(0).findViewById(R.id.navimageView);
+            ft.replace(R.id.fragment_container,nfragment);
+            ft.commit();
+
+
             return true;
         }
 
@@ -366,6 +367,8 @@ public class MainActivity extends AppCompatActivity
                 userIDinFB = "";
                 getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 Fragment nfragment = ListActivityFragment.newInstance("Tennis");
+                ImageView iv = (ImageView) mNavView.getHeaderView(0).findViewById(R.id.navimageView);
+                iv.setImageDrawable(null);
                 ft.replace(R.id.fragment_container,nfragment);
                 ft.commit();
                 return true;

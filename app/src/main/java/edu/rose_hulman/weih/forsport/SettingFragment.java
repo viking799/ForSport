@@ -192,9 +192,9 @@ public class SettingFragment extends Fragment {
         switch (requestCode){
             case SELECTED_PICTURE:
                 if(resultCode == RESULT_OK){
-                    uri = data.getData();
-                    iv.setImageURI(uri);
-                    bitmap = ((BitmapDrawable)iv.getDrawable()).getBitmap();
+                    uri = data.getData(); // You get the uri for the Image
+                    iv.setImageURI(uri);  // Using the image
+                    bitmap = ((BitmapDrawable)iv.getDrawable()).getBitmap(); // Get the bitmap for the image
                 }
                 break;
         }
